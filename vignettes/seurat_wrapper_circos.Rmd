@@ -1,0 +1,263 @@
+---
+title: "Seurat Wrapper + Circos visualization"
+author: "Robin Browaeys"
+date: "2023-10-02"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Seurat Wrapper + Circos visualization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: library.bib
+---
+
+<!-- github markdown built using 
+rmarkdown::render("vignettes/seurat_wrapper_circos.Rmd", output_format = "github_document")
+-->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  # comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+In this vignette, you can learn how to visualize the output of a NicheNet analysis in a circos plot (also called a chord diagram) via the `circlize` package. This vignette follows the same workflow as shown in [Perform NicheNet analysis starting from a Seurat object](seurat_wrapper.md). 
+
+This vignette was made upon popular request to demonstrate how those two vignettes can be combined into one analysis workflow. Note that we as developers of NicheNet generally recommend a visualization of the output by combining several heatmaps (ligand activity, ligand-target links, ligand-receptor links, ligand expression, ligand LFC,...) over using a circos plot visualization. This is especially true for cases with many sender cell types and ligands that are expressed by more than one sender cell type. Because in those cases, the circos plot is much less informative and could lead to wrong interpretation of the results.
+
+We will again use the NICHE-seq data from Medaglia et al. (2017), which profiles several immune cell types in the T cell area in the inguinal lymph node before and 72 hours after lymphocytic choriomeningitis virus (LCMV) infection.
+You can download the [NicheNet networks](https://doi.org/10.5281/zenodo.7074290) and the [Seurat object of the processed NICHE-seq single-cell data](https://doi.org/10.5281/zenodo.3531889) from Zenodo.
+
+# Prepare NicheNet analysis
+
+### Load packages
+
+```{r}
+library(nichenetr) # Please update to v2.0.4
+library(Seurat)
+library(SeuratObject)
+library(tidyverse)
+library(circlize)
+```
+
+### Read in NicheNet's networks
+
+```{r}
+ligand_target_matrix <- readRDS(url("https://zenodo.org/record/7074291/files/ligand_target_matrix_nsga2r_final_mouse.rds"))
+lr_network <- readRDS(url("https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds"))
+weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds"))
+head(lr_network)
+
+```
+
+### Read in the expression data of interacting cells
+
+
+```{r}
+seuratObj <- readRDS(url("https://zenodo.org/record/3531889/files/seuratObj.rds"))
+
+# For newer Seurat versions, you may need to run the following
+seuratObj <- UpdateSeuratObject(seuratObj)
+
+# Convert gene names
+seuratObj <- alias_to_symbol_seurat(seuratObj, "mouse")
+```
+
+
+# Perform the NicheNet analysis
+
+For this analysis, we define the receiver cell population as the 'CD8 T' cell population, and the sender cell populations as 'CD4 T', 'Treg', 'Mono', 'NK', 'B' and 'DC'. We consider a gene to be expressed when it is expressed in at least 10% of cells in one cluster (default).
+
+The gene set of interest are the genes differentially expressed in CD8 T cells after LCMV infection. The condition of interest is thus 'LCMV', whereas the reference/steady-state condition is 'SS'. The notion of conditions can be extracted from the metadata column 'aggregate', the method to calculate the differential expression is the standard Seurat Wilcoxon test. 
+
+The number of top-ranked ligands that are further used to predict active target genes and construct an active ligand-receptor network is 30 by default, but we will only choose the top 20 to not overcrowd the circos plot.
+
+**Note:** Cell types should be the identities of the seurat object (check using `table(Idents(seuratObj))`)
+
+```{r}
+sender_celltypes <- c("CD4 T","Treg", "Mono", "NK", "B", "DC")
+nichenet_output <- nichenet_seuratobj_aggregate(
+  seurat_obj = seuratObj, 
+  receiver = "CD8 T", 
+  condition_colname = "aggregate",
+  condition_oi = "LCMV", condition_reference = "SS", 
+  sender = sender_celltypes, 
+  ligand_target_matrix = ligand_target_matrix,
+  lr_network = lr_network,
+  weighted_networks = weighted_networks,
+  top_n_ligands = 20)
+```
+
+### Interpret the NicheNet analysis output
+
+#### Ligand activity analysis results
+
+A first thing NicheNet does, is prioritizing ligands based on predicted ligand activity. To see the ranking of these ligands, run the following command:
+
+```{r}
+nichenet_output$ligand_activities
+```
+
+These ligands are expressed by one or more of the input sender cells. To see which cell population expresses which of these top-ranked ligands, you can run the following:
+
+```{r dotplot, fig.width=12}
+nichenet_output$ligand_expression_dotplot
+```
+
+As you can see, most of the top-ranked ligands seem to be mainly expressed by dendritic cells and monocytes.
+
+It could also be interesting to see whether some of these ligands are differentially expressed after LCMV infection.
+
+```{r lfc-heatmap, fig.width=12}
+nichenet_output$ligand_differential_expression_heatmap
+```
+
+```{r violin-plot}
+VlnPlot(seuratObj, features = c("Ptprc", "H2-M3", "Cxcl10"), split.by = "aggregate", pt.size = 0, combine = TRUE)
+```
+
+#### Inferred active ligand-target links
+
+NicheNet also infers active target genes of these top-ranked ligands. To see which top-ranked ligands are predicted to have regulated the expression of which differentially expressed genes, you can run following command for a heatmap visualization:
+
+```{r ligand-target-heatmap}
+nichenet_output$ligand_target_heatmap
+```
+
+## Circos plots to visualize ligand-target and ligand-receptor interactions
+
+This visualization groups the top predicted active ligands according to the strongest expressing cell type. Therefore we need to determine per cell type which ligands they express more strongly than the other cell types. 
+
+### Assign ligands to sender cells
+
+To assign ligands to sender cell type, we can look for which sender cell types show a mean expression that is higher than the mean + one standard deviation. You can change the functions to aggregate the counts (`func.agg`, default is the mean) and function to assign the ligands (`func.assign`, default is mean + SD). Ligands that are expressed higher than `func.assign` in more than one cell type and ligands that are not assigned to any cell type are assigned to "General".
+
+```{r}
+ligand_type_indication_df <- assign_ligands_to_celltype(seuratObj,
+                                                        nichenet_output$top_ligands,
+                                                        celltype_col = "celltype") 
+
+ligand_type_indication_df %>% head()
+ligand_type_indication_df$ligand_type %>% table()
+```
+
+### Define the ligand-target links of interest
+
+We will need the ligand-target links from the NicheNet output. To avoid making a circos plots with too many ligand-target links, we will show only links with a weight higher than a predefined cutoff: links belonging to the 40% of lowest scores were removed. Not that this cutoffs and other cutoffs used for this visualization can be changed according to the user's needs.
+
+```{r}
+head(nichenet_output$ligand_target_df)
+
+active_ligand_target_links_df <- nichenet_output$ligand_target_df
+active_ligand_target_links_df$target_type <- "LCMV-DE" # needed for joining tables
+circos_links <- get_ligand_target_links_oi(ligand_type_indication_df,
+                                           active_ligand_target_links_df,
+                                           cutoff = 0.40) 
+
+head(circos_links)
+
+```
+
+Prepare the circos visualization by giving each segment of ligands and targets a specific color and order, as well as gaps between different cell types. By default, cell types are ordered alphabetically, followed by "General" (then they are drawn counter-clockwise). Users can give a specific order to the cell types by providing a vector of cell types to the argument `celltype_order`. The gaps between the different segments can also be defined by providing a named list to the argument `widths`.
+
+```{r}
+ligand_colors <- c("General" = "#377EB8", "NK" = "#4DAF4A", "B" = "#984EA3",
+                   "Mono" = "#FF7F00", "DC" = "#FFFF33", "Treg" = "#F781BF",
+                   "CD8 T"= "#E41A1C") 
+target_colors <- c("LCMV-DE" = "#999999") 
+
+vis_circos_obj <- prepare_circos_visualization(circos_links,
+                                               ligand_colors = ligand_colors,
+                                               target_colors = target_colors,
+                                               celltype_order = NULL) 
+```
+
+Render the circos plot where all links have the same transparency.  Here, only the widths of the blocks that indicate each target gene is proportional the ligand-target regulatory potential (~prior knowledge supporting the regulatory interaction). 
+
+```{r ligand-target-circos, fig.width=8, fig.height=8}
+
+make_circos_plot(vis_circos_obj, transparency = FALSE,  args.circos.text = list(cex = 0.5)) 
+
+```
+
+Render the circos plot where the degree of transparency determined by the regulatory potential value of a ligand-target interaction.
+
+```{r ligand-target-circos-transparent, fig.width=8, fig.height=8}
+make_circos_plot(vis_circos_obj, transparency = TRUE,  args.circos.text = list(cex = 0.5)) 
+```
+
+To create a legend for the circos plot, we can use the `ComplexHeatmap::Legend` function and creating a gTree object from it with `grid::grid.grabExpr`. As the circos plot is drawn on base R graphics (i.e., it is not a ggplot object), we will get the plot using `recordPlot()`.
+
+```{r ligand-target-circos-unused, fig.show='hide'}
+par(bg = "transparent")
+
+# Default celltype order
+celltype_order <- unique(circos_links$ligand_type) %>% sort() %>% .[. != "General"] %>% c(., "General")
+
+# Create legend
+circos_legend <- ComplexHeatmap::Legend(
+  labels = celltype_order,
+  background = ligand_colors[celltype_order],
+  type = "point",
+  grid_height = unit(3, "mm"),
+  grid_width = unit(3, "mm"),
+  labels_gp = grid::gpar(fontsize = 8)
+  )
+
+circos_legend_grob <- grid::grid.grabExpr(ComplexHeatmap::draw(circos_legend))
+
+make_circos_plot(vis_circos_obj, transparency = TRUE, args.circos.text = list(cex = 0.5))
+p_circos_no_legend <- recordPlot()
+```
+
+We can combine the circos plot and the legend using `cowplot::plot_grid`.
+```{r ligand-target-circos-with-legend, fig.width=8, fig.height=8}
+cowplot::plot_grid(p_circos_no_legend, circos_legend_grob, rel_widths = c(1, 0.1))
+```
+
+
+We can save this plot to an svg file.
+
+```{r eval=FALSE}
+svg("ligand_target_circos.svg", width = 10, height = 10)
+cowplot::plot_grid(p_circos_no_legend, circos_legend_grob, rel_widths = c(1, 0.1))
+dev.off()
+```
+
+### Visualize ligand-receptor interactions of the prioritized ligands in a circos plot
+
+To create a ligand-receptor chord diagram, we can perform similar steps as above using the weighted ligand-receptor dataframe instead. However, as as `prepare_circos_visualization` accesses "target" and "target_type" columns, it is necessary to rename the columns accordingly even though the dataframe contains receptor and not target gene information.
+
+```{r}
+lr_network_top_df <- nichenet_output$ligand_receptor_df %>%
+  mutate(target_type = "LCMV_CD8T_receptor") %>%
+  rename(target=receptor) %>%
+  inner_join(ligand_type_indication_df)
+
+receptor_colors <- c("LCMV_CD8T_receptor" = "#E41A1C")
+
+vis_circos_receptor_obj <- prepare_circos_visualization(lr_network_top_df,
+                                                        ligand_colors = ligand_colors,
+                                                        target_colors = receptor_colors) 
+```
+
+When drawing the plot, the argument `link.visible` = TRUE is also necessary for making all links visible, since no cutoff is used to filter out ligand-receptor interactions.
+
+```{r ligand-receptor-circos}
+make_circos_plot(vis_circos_receptor_obj, transparency = FALSE,
+                 link.visible = TRUE,  args.circos.text = list(cex = 0.8)) 
+```
+
+Just as above, if `transparency = TRUE`, the degree of transparency is determined by the prior interaction weight of the ligand-receptor interaction.
+
+### FAQ: How to draw a double circos plot of ligand-receptor-target links?
+
+Please check the [HNSCC case study + double circos visualization](circos_plot.md) for the demonstration.
+
+
+```{r}
+sessionInfo()
+```
+
