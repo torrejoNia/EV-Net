@@ -1,8 +1,3 @@
----
-output:
-  github_document:
-    html_preview: true
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -10,7 +5,9 @@ output:
 rmarkdown::render("README.Rmd",output_format = "md_document")
 -->
 
-![EV-Net_logo](man/figures/logo.png)
+<p align="center">
+  <img src="man/figures/logo.png" width="200"/>
+</p>
 
 **EV-Net: Extracellular vesicles-mediated intercellular communication networks.** EV-Net enables the exploration of how extracellular vesicles (EVs) cargo influences receiving tissues of interest.
 
