@@ -6,7 +6,7 @@ rmarkdown::render("README.Rmd",output_format = "md_document")
 -->
 
 <p align="center">
-  <img src="man/figures/logo.png" width="200"/>
+  <img src="man/figures/logo.png" width="300"/>
 </p>
 
 **EV-Net: Extracellular vesicles-mediated intercellular communication networks.** EV-Net enables the exploration of how extracellular vesicles (EVs) cargo influences receiving tissues of interest.
