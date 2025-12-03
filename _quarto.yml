@@ -1,0 +1,22 @@
+project:
+  type: website
+  output-dir: docs
+
+format:
+  html:
+    theme: cyborg
+
+website:
+  title: "EV-Net"
+  navbar:
+    left:
+      - href: /
+        text: Home
+      - text: Vignettes
+        menu:
+          - href: vignettes/Use_case_1_Effect_of_gut_EVs_in_KC_TabulaMurisAtlas.html
+            text: Use case 1
+          - href: vignettes/Use_case_2_Effect_of_LPC_treated_microglia_EVs_on_microglia.html
+            text: Use case 2
+      - href: reference.html
+        text: Functions

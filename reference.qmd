@@ -1,0 +1,13 @@
+---
+title: "reference"
+format: html
+---
+
+# Functions
+
+This page lists the key functions in **EV-Net**.
+
+```         
+library(EV-Net) 
+help(package = "EV-Net")
+```

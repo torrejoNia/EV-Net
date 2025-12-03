@@ -1,0 +1,336 @@
+---
+title: "Use case 1: Effect of gut EVs in Kupffer cells (Tabula Muris)"
+author: "Estefania"
+date: "2025-03-10"
+output: md_document
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+r_files <- list.files("../R", pattern = "\\.R$", full.names = TRUE)
+lapply(r_files, source)
+
+knitr::opts_chunk$set(echo = TRUE, fig.path='figures/', message=FALSE)
+```
+
+This use case investigates the impact of gut-derived EVs proteomic cargo from a prediabetic mouse model on Kupffer cells, focusing on genes that are upregulated in Kupffer cells compared to hepatocytes.
+
+### 0. Load required packages
+```{r}
+
+library(Seurat)
+library(SeuratObject)
+library(tidyverse)
+library(dplyr)
+library(here)
+```
+
+1. Load filtered Seurat object
+
+The dataset comes from the liver (FACS) subset of the Tabula Muris Atlas (Tabula Muris Consortium, 2018). For quality control, we filtered the Seurat object to retain only features with at least 10 counts and expressed in at least 5% of either the Kupffer cell or hepatocyte populations.
+
+```{r}
+new_seurat_object <- readRDS(url("https://zenodo.org/record/15014486/files/filtered_seurat_obj_use_case_1.rds"))
+```
+
+### 2. Quality control of the filtered Seurat object
+
+After filtering, we perform quality control on the new Seurat object to explore the resulting subset of features and assess the composition of cell populations.
+
+```{r}
+new_seurat_object@meta.data$cell_ontology_class %>% table() 
+```
+
+Visualize QC metrics using a violin plot
+
+```{r}
+VlnPlot(new_seurat_object, features = c("nFeature_RNA", "nCount_RNA"), ncol = 3)
+```
+
+Visualize cell populations using UMAP
+
+```{r}
+DimPlot(new_seurat_object, reduction = "umap")
+
+```
+
+### 3. Subset cell populations of interest (Kupffer cells and hepatocytes)
+
+In this step, we retain only the Kupffer cell and hepatocyte populations for downstream analysis. This allows us to focus on the relevant cell types and reduce noise from other populations.
+
+```{r}
+seurat_obj <- subset(new_seurat_object,
+        subset = cell_ontology_class %in% c("Kupffer cell", "hepatocyte"))
+
+Idents(object = seurat_obj) <- seurat_obj@meta.data$cell_ontology_class
+```
+
+### 4. Verify that only Kupffer cells and hepatocytes are retained
+
+```{r}
+seurat_obj@meta.data$cell_ontology_class %>% table() 
+```
+
+### 5. Load NicheNet networks from Zenodo
+
+EV-Net relies on NicheNet’s weighted networks, which contain prior knowledge about signaling and regulatory interactions. For this use case, we are loding the networks required for a mouse organism.
+
+```{r}
+organism <- "mouse"
+
+if(organism == "human"){
+  lr_network <- readRDS(url("https://zenodo.org/record/7074291/files/lr_network_human_21122021.rds"))
+  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds"))
+} else if(organism == "mouse"){
+  lr_network <- readRDS(url("https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds"))
+  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds"))
+
+}
+
+lr_network <- lr_network %>% distinct(from, to)
+head(lr_network)
+```
+
+### 6. Download and load the EV-Net EV_cargo_target_matrix 
+
+Download it from https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds and load it into your R environment.
+
+```{r}
+EV_cargo_target_matrix <- readRDS("~/embo/Netiev/EV_cargo_target_matrix.rds")
+#Replace file path with the path in which you stored the EV_cargo_target_matrix rds file
+```
+
+
+### 7. Define receiver cell populations and select shared features
+
+In this step we extract the cells for each population (Kupffer cells and hepatocytes), get their count matrices, and identify the genes expressed in at least one cell. The two lists of genes are then combined and duplicates removed, producing a unified set of features for downstream EV cargo analysis.
+
+> **Note:** Add an identity class label (idents) for your cell populations
+
+```{r}
+# Step 1: Extract the cells belonging to each cell type
+cells_type_1 <- WhichCells(new_seurat_object, idents = "Kupffer cell")
+cells_type_2 <- WhichCells(new_seurat_object, idents = "hepatocyte")
+
+# Step 2: Subset the Seurat object to get the count matrix for each cell type
+data_matrix <- GetAssayData(new_seurat_object, slot = "counts")
+
+# Get the features (genes) expressed in each cell type
+# Features expressed in at least one cell for cell_type_1 (Kupffer cells)
+features_type_1 <- rownames(data_matrix)[rowSums(data_matrix[, cells_type_1] > 0) > 0]
+
+# Features expressed in at least one cell for cell_type_2 (hepatocyte)
+features_type_2 <- rownames(data_matrix)[rowSums(data_matrix[, cells_type_2] > 0) > 0]
+
+# Step 3: Combine the two lists of features and remove duplicates
+combined_features <- unique(c(features_type_1, features_type_2))
+
+```
+
+Next, we define our receivers 
+
+```{r}
+receiver = c("Kupffer cell", "hepatocyte")
+
+expressed_genes_receiver <- combined_features
+```
+
+### 8. Define expressed interactors and the potential EV cargo
+
+In this step, we identify expressed interactors, which are all proteins expressed in the receiving cell populations, including receptors, downstream signaling proteins, and transcription factors, that could potentially interact with the potential EV cargo (actual EV cargo will be defined in a following step). These expressed interactors will be used to link EV cargo to target genes in downstream analyses.
+
+```{r}
+all_genes <- unique(rownames(EV_cargo_target_matrix))  
+expressed_interactors <- intersect(all_genes, expressed_genes_receiver)
+
+lr_sig <- weighted_networks[["lr_sig"]]
+gr <- weighted_networks[["gr"]]
+
+potential_EV_cargo_prot <- lr_sig[lr_sig$to %in% expressed_interactors, "from"]
+potential_EV_cargo_tf <- gr[gr$to %in% expressed_interactors, "from"]
+potential_EV_cargo <- unique(c(potential_EV_cargo_prot$from, potential_EV_cargo_tf$from))
+```
+
+### 9. Reduce the size of the EV_cargo_target_matrix
+
+The EV_cargo_target_matrix is large (3.6 GB). If your system has limited RAM, it is recommended to filter the matrix to keep only the expressed genes in the receiver and the potential EV cargo, which significantly reduces its size. This step is optional for systems with 32 GB of RAM or more.
+
+```{r}
+EV_cargo_target_matrix <- EV_cargo_target_matrix[rownames(EV_cargo_target_matrix) %in% expressed_genes_receiver, colnames(EV_cargo_target_matrix) %in% potential_EV_cargo]
+
+```
+
+Release memory using the garbage collector
+
+```{r}
+gc()
+```
+
+### 10. Load the differentially abundant prediabetic EV cargo
+
+We load the EV cargo differentially abundant in the prediabetic condition. This includes proteins with a p-value < 0.05 and a negative log fold change, identified using an empirical Bayes t-test with limma comparing healthy and prediabetic conditions. These filtered prediabteic EV cargo will be used to assess their potential impact on the Kupffer cells.
+
+```{r}
+prediabetic_EV_cargo <- readRDS(url("https://zenodo.org/record/17041035/files/prediabetic_EV_cargo.rds"))
+
+```
+
+### 11. Get list of EV_cargo
+
+The final set of EV cargo is obtained by selecting proteins that are present in both the actual prediabetic EV cargo and the list of potential EV cargo (obtained in step 8). This ensures that we focus on proteins that are differentially abundant in the prediabetic condition and that may influence the expressed genes in the receiving tissue.
+
+```{r}
+EV_cargo <- intersect(potential_EV_cargo, prediabetic_EV_cargo)
+```
+
+### 12. Define the gene set of interest
+
+To define the gene set of interest, we use Seurat’s `FindMarkers()` function to assess differential expression between our cell populations. Genes with an average log2 fold change `(avg_log2FC) ≥ 0.25` are selected as upregulated in Kupffer cells.
+
+```{r}
+condition_oi <-  "Kupffer cell"
+condition_reference <- "hepatocyte"
+
+seurat_obj_receiver <- subset(seurat_obj, idents = receiver)
+
+DE_table_receiver <-  FindMarkers(object = seurat_obj,
+                                  ident.1 = condition_oi, ident.2 = condition_reference,
+                                  group.by = "cell_ontology_class",
+                                  min.pct = 0.05) %>% rownames_to_column("gene")
+
+geneset_oi <- DE_table_receiver %>% filter(p_val_adj <= 0.05 & avg_log2FC >= 0.25) %>% pull(gene)
+geneset_oi <- geneset_oi %>% .[. %in% rownames(EV_cargo_target_matrix)]
+```
+
+### 13. Defining background genes
+
+Background genes are all genes expressed in the receiving cell populations. They provide a reference set for statistical analyses and enrichment calculations.
+
+```{r}
+background_expressed_genes <- expressed_genes_receiver %>% .[. %in% rownames(EV_cargo_target_matrix)]
+```
+
+### 14. Perform EV cargo activity analysis
+
+```{r}
+EV_cargo_activities <- predict_EV_cargo_activities(geneset = geneset_oi,
+                                               background_expressed_genes = background_expressed_genes,
+                                               EV_cargo_target_matrix = EV_cargo_target_matrix,
+                                               potential_EV_cargo = EV_cargo)
+
+EV_cargo_activities <- EV_cargo_activities %>% arrange(-aupr_corrected) %>% mutate(rank = rank(desc(aupr_corrected)))
+EV_cargo_activities
+
+```
+
+### 15. Visualization of top-ranked EV cargo
+
+```{r}
+p_hist_EV_cargo_activity <- ggplot(EV_cargo_activities, aes(x=aupr_corrected)) + 
+  geom_histogram(color="black", fill="darkorange")  + 
+  geom_vline(aes(xintercept=min(EV_cargo_activities %>% top_n(10, aupr_corrected) %>% pull(aupr_corrected))),
+             color="red", linetype="dashed", size=1) + 
+  labs(x="EV cargo activity (PCC)", y = "# EV cargo") +
+  theme_classic()
+
+p_hist_EV_cargo_activity
+```
+
+### 16. We can also visualize the EV cargo activity measure (AUPR) of these top-ranked EV cargo
+> **Note:** We have selected the top 30 `best_upstream_EV_cargo` but this number can be changed.
+
+```{r}
+best_upstream_EV_cargo <- EV_cargo_activities %>% top_n(30, aupr_corrected) %>% arrange(-aupr_corrected) %>% pull(test_EV_cargo)
+
+vis_EV_cargo_aupr <- EV_cargo_activities %>% filter(test_EV_cargo %in% best_upstream_EV_cargo) %>%
+  column_to_rownames("test_EV_cargo") %>% select(aupr_corrected) %>% arrange(aupr_corrected) %>% as.matrix(ncol = 1)
+
+(make_heatmap_ggplot(vis_EV_cargo_aupr,
+                     "Prioritized EV cargo", "EV cargo activity", 
+                     legend_title = "AUPR", color = "darkorange") + 
+    theme(axis.text.x.top = element_blank()))  
+```
+
+### 17. Infer target genes  of top-ranked EV cargo
+
+```{r}
+active_EV_cargo_target_links_df <- best_upstream_EV_cargo %>%
+  lapply(get_weighted_EV_cargo_target_links,
+         geneset = geneset_oi,
+         EV_cargo_target_matrix = EV_cargo_target_matrix,
+         n = 80) %>%
+  bind_rows() %>% drop_na()
+```
+
+```{r}
+active_EV_cargo_target_links <- prepare_EV_cargo_target_visualization(
+  EV_cargo_target_df = active_EV_cargo_target_links_df,
+  EV_cargo_target_matrix = EV_cargo_target_matrix,
+  cutoff = 0.5) 
+```
+
+```{r}
+order_EV_cargo <- intersect(best_upstream_EV_cargo, colnames(active_EV_cargo_target_links)) %>% rev()
+order_targets <- active_EV_cargo_target_links_df$target %>% unique() %>% intersect(rownames(active_EV_cargo_target_links))
+
+vis_EV_cargo_target <- t(active_EV_cargo_target_links[order_targets,order_EV_cargo])
+
+target_genes_heatmap <- make_heatmap_ggplot(vis_EV_cargo_target, "Prioritized EV cargo", "Predicted target genes",
+                    color = "purple", legend_title = "Regulatory potential") +
+  scale_fill_gradient2(low = "whitesmoke",  high = "purple")
+```
+
+```{r}
+target_genes_heatmap
+```
+
+Save plot (optional)
+```{r}
+png("target_genes_heatmap_prediabetic_EV_cargo_target_matrix_newHyper.png", res = 300, width = 5000, height = 2000)
+print(target_genes_heatmap)
+```
+
+### 18. Build an interaction network
+
+Next, we build an interaction network for one of the top-ranked EV cargo, the Scly protein, and two of its biologically relevant target genes for prediabetes: Zeb2 and Foxo1. These targets were selected after examining the `target_genes_heatmap` to prioritize genes with potential functional significance.
+
+Load Nichenet's sig_network and gr_network from zenodo
+
+```{r}
+sig_network <- readRDS(url("https://zenodo.org/records/7074291/files/signaling_network_mouse_21122021.rds"))
+gr_network <- readRDS(url("https://zenodo.org/records/7074291/files/gr_network_mouse_21122021.rds"))
+```
+
+Infer EV_cargo-to-target signaling paths
+
+```{r}
+EV_cargo_oi <- "Scly"
+targets_oi <- c("Zeb2", "Foxo1")
+
+active_signaling_network <- get_EV_cargo_signaling_path(EV_cargo_all = EV_cargo_oi,
+                                                      targets_all = targets_oi, 
+                                                      weighted_networks = weighted_networks,
+                                                      EV_cargo_tf_matrix = EV_cargo_target_matrix,
+                                                      top_n_regulators = 4,
+                                                      minmax_scaling = TRUE) 
+
+
+graph_min_max <- diagrammer_format_signaling_graph(signaling_graph_list = active_signaling_network,
+                                                   EV_cargo_all = EV_cargo_oi, targets_all = targets_oi,
+                                                   sig_color = "indianred", gr_color = "steelblue")
+
+DiagrammeR::render_graph(graph_min_max, layout = "tree")
+
+# To export/draw the svg, you need to install DiagrammeRsvg
+#graph_svg <- DiagrammeRsvg::export_svg(DiagrammeR::render_graph(graph_min_max, layout = "tree", output = "graph"))
+#cowplot::ggdraw() + cowplot::draw_image(charToRaw(graph_svg))
+```
+
+Optional: Create a dataframe with annotations of collected data sources supporting the interactions in this network.
+
+```{r}
+data_source_network <- infer_supporting_datasources(signaling_graph_list = active_signaling_network,
+                                                    lr_network = lr_network, sig_network = sig_network, gr_network = gr_network)
+head(data_source_network) 
+```
+

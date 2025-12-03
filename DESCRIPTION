@@ -1,0 +1,58 @@
+Package: EV-Net
+Type: Package
+Title: Extracellular vesicles-mediated intercellular communication networks 
+Version: 0.1.0
+Author: Estefania Torrejon, Joeri Sleegers, Rune Matthiesen, Rita Machado de Oliveira, Anais Baudot
+Maintainer: Estefania Torrejon <estefania.torrejon@nms.unl.pt>
+Description: This package allow to explore the predicted effect of EVs proteomic or transcriptomic cargo in their recipient tissue of interest.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/torrejoNia/EV-Net
+BugReports: https://github.com/torrejoNia/EV-Net/issues
+RoxygenNote: 7.3.2
+Depends: R (>= 4.5.1)
+Imports:
+    tidyverse,
+    data.table,
+    dplyr,
+    ggplot2,
+    magrittr,
+    purrr,
+    readr,
+    tibble,
+    tidyr,
+    igraph,
+    Matrix,
+    fdrtool,
+    ROCR,
+    caTools,
+    Hmisc,
+    caret,
+    randomForest,
+    DiagrammeR,
+    mlrMBO,
+    parallelMap,
+    emoa,
+    DiceKriging,
+    e1071,
+    Seurat,
+    cowplot,
+    ggpubr,
+    ComplexHeatmap,
+    grDevices,
+    ggnewscale,
+    ggforce,
+    shadowtext
+Suggests: 
+    knitr,
+    RColorBrewer,
+    rmarkdown,
+    testthat,
+    doMC,
+    limma,
+    mco,
+    parallel,
+    covr,
+    sf
+    
