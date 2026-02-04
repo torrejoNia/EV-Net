@@ -7,12 +7,12 @@
 \format{
 A data frame/tibble
 \describe{
-  \item{source}{Name of the data source}
-  \item{database}{Name of the comprehensive database to which the data source belongs}
-  \item{type_db}{Type of data source}
-  \item{type_interaction}{Interaction type}
-  \item{network}{Network layer to which the data source belongs: EV_cargo_receptor, signaling or gene_regulatory}
-  }
+\item{source}{Name of the data source}
+\item{database}{Name of the comprehensive database to which the data source belongs}
+\item{type_db}{Type of data source}
+\item{type_interaction}{Interaction type}
+\item{network}{Network layer to which the data source belongs: EV_cargo_receptor, signaling or gene_regulatory}
+}
 }
 \usage{
 annotation_data_sources

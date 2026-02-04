@@ -163,22 +163,8 @@ prepare_EV_cargo_target_visualization = function(EV_cargo_target_df, EV_cargo_ta
 
 }
 
-#' @title Get the weighted EV_cargo-receptor links between a possible EV_cargo and its receptors
-#' @description \code{get_weighted_EV_cargo_receptor_links} Get the weighted EV_cargo-receptor links between a possible EV_cargo and its receptors
-#'
-#' @param best_upstream_EV_cargo Character vector containing EV_cargo of interest.
-#' @param expressed_receptors Character vector of receptors expressed in the cell type of interest.
-#' @param lr_network A data frame with two columns, \code{from} and \code{to}, containing the EV_cargo-receptor interactions.
-#' @param weighted_networks_lr_sig A data frame with three columns, \code{from}, \code{to} and \code{weight}, containing the EV_cargo-receptor interactions and their weights.
-#'
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#'   EV_cargo_receptor_links_df <- get_weighted_EV_cargo_receptor_links(best_upstream_EV_cargo, expressed_receptors, lr_network, weighted_networks$lr_sig)
-#' }
-#'
+#' @keywords internal
+#' 
 get_weighted_EV_cargo_receptor_links = function(best_upstream_EV_cargo, expressed_receptors, lr_network, weighted_networks_lr_sig) {
 
   lr_network <- lr_network %>% distinct(from, to)

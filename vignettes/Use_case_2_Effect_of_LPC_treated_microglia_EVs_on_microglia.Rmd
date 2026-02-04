@@ -2,7 +2,9 @@
 title: "Use case 2: Effect of LPS treated microglia EVs in healthy microglia"
 author: "Estefania"
 date: "2025-03-23"
-output: md_document
+output: 
+  html_document:
+    theme: darkly
 always_allow_html: true
 ---
 
@@ -29,7 +31,7 @@ library(here)
 The dataset used in this vignette originates from Santiago et al. (2023), “Identification of State-Specific Proteomic and Transcriptomic Signatures of Microglia-Derived Extracellular Vesicles.” It comprises EVs proteomics data from LPS-stimulated microglia and RNA-seq data from recipient (healthy) microglia exposed to these EVs.
 
 ```{r 1}
-LPS_microglia_EVs <- read.csv(url("https://zenodo.org/records/17391831/files/LPS_microglia_EVs.csv"), stringsAsFactors = FALSE)
+LPS_microglia_EVs <- read.csv(url("https://zenodo.org/records/17391831/files/LPS_microglia_EVs.csv?download=1"), stringsAsFactors = FALSE)
 ```
 
 ### 2. Extracting the LPS_EV_cargo (more abundant in LPS treated microglia)
@@ -43,7 +45,7 @@ LPS_EV_cargo <- LPS_microglia_EVs %>%
 ### 3. Importing receiving microglia expression dataset
 
 ```{r 3}
-receiving_microglia_expression <- readRDS(url("https://zenodo.org/records/17581185/files/receiving_microglia_expression.rds"))
+receiving_microglia_expression <- readRDS(url("https://zenodo.org/records/17581185/files/receiving_microglia_expression.rds?download=1"))
 ```
 
 ### 4. Defining expressed genes in receiver microglia
@@ -55,15 +57,16 @@ expressed_genes_receiver <- receiving_microglia_expression$UniProt
 ### 5. Loading Nichenet networks from Zenodo
 
 ```{r 5}
+options(timeout = 600)
 organism <- "mouse"
 
 if(organism == "human"){
   lr_network <- readRDS(url("https://zenodo.org/record/7074291/files/lr_network_human_21122021.rds"))
-  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds"))
+  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds?download=1"))
 } else if(organism == "mouse"){
   lr_network <- readRDS(url("https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds"))
-  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds"))
-
+  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds?download=1"))
+  
 }
 
 lr_network <- lr_network %>% distinct(from, to)

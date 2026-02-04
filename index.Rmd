@@ -25,7 +25,7 @@ if(!requireNamespace("devtools", quietly = TRUE)) {
   install.packages("devtools") 
 }
 
-devtools::install_github("torrejoNIa/EV-Net")
+devtools::install_github("torrejoNia/EV-Net")
 ```
 
 EV-Net was tested on both Windows and Linux (most recently tested R version: R 4.5.1)
@@ -37,14 +37,14 @@ We would be submitting our package to Bioconductor in the near future.
 
 Extracellular vesicles (EVs) are small, bilayered vesicles that carry diverse bioactive molecules such as nucleic acids, proteins, and lipids. These vesicles play a crucial role in cell-to-cell communication, but their importance is often overlooked in communication network models. In addition to that, current tools available for studying these networks are not designed to handle EV-specific data.
 
-To address this challenge, we adapted Nichenet (Browaeys et al., 2020), an existing framework for cell-to-cell communication exploration, for its use on EVs datasets. 
+To address this challenge, we adapted NicheNet (Browaeys et al., 2020), an existing framework for cell-to-cell communication exploration, for its use on EVs datasets. 
 
 Originally, NicheNet was designed to analyze cell-to-cell communication by identifying ligands driving gene expression changes via ligand-receptor interactions. Since EVs can also deliver cargo through mechanisms beyond ligand-receptor interactions, such as membrane fusion and endocytosis, we modified NicheNet for its use on EVs. This modification expanded the tool’s scope to include not only ligands, but also dowsntream proteins proteins and transcription factors, ensuring a more comprehensive analysis of EV-mediated communication.
 <br><br>
 ![](man/figures/NichenetvsEVNet.png)
 <br><br>
 
-NicheNet utilizes a Personalized PageRank algorithm to generate a ligand-to-target scoring matrix. This process involves random walk restarts using each ligand as a seed node to obtain the scoring for each ligand-target diffusion. To tailor this method to our needs, we modified it and applied the algorithm to not only ligands, but also the downstream signaling proteins and transcription factors. This modification generated a new protein-to-target matrix comprising 19 790 proteins (spanning ligands, downstream proteins and transcription factors) and 22 521 target genes. This new  protein-to-target matrix replaced the original Nichenet ligand-to-target matrix, which only contained 1287 ligands and 22521 target genes.
+NicheNet utilizes a Personalized PageRank algorithm to generate a ligand-to-target scoring matrix. This process involves random walk restarts using each ligand as a seed node to obtain the scoring for each ligand-target diffusion. To tailor this method to our needs, we modified it and applied the algorithm to not only ligands, but also the downstream signaling proteins and transcription factors. This modification generated a new protein-to-target matrix comprising 19 790 proteins (spanning ligands, downstream proteins and transcription factors) and 22 521 target genes. This new  protein-to-target matrix replaced the original NicheNet ligand-to-target matrix, which only contained 1287 ligands and 22521 target genes.
 
 ### Main functionalities of EV-Net
 
@@ -74,10 +74,19 @@ The following vignettes demonstrate how to perform a basic EV-Net analysis. We p
 
 * [Use case 1: Effect of gut EVs in KC (Tabula Muris Atlas)](vignettes/Use_case_1_Effect_of_gut_EVs_in_KC_TabulaMurisAtlas.html)
 
-* [Use case 2: Use case 2 Effect of LPC treated microglia EVs on microglia)](vignettes/Use_case_2_Effect_of_LPC_treated_microglia_EVs_on_microglia.html) 
+* [Use case 2: Use case 2 Effect of LPC treated microglia EVs on microglia](vignettes/Use_case_2_Effect_of_LPC_treated_microglia_EVs_on_microglia.html) 
+
+## Authors
+
+[Estefania Torrejon](https://scholar.google.com/citations?user=c5RvnlUAAAAJ&hl=en&oi=ao), [Joeri Sleegers](https://scholar.google.com/citations?user=hRSv5kwAAAAJ&hl=en&oi=ao), [Rune Matthiesen](https://scholar.google.com/citations?user=tsjn1BcAAAAJ&hl=en&oi=ao), [Maria Paula Macedo](https://scholar.google.com/citations?user=qjZpKj0AAAAJ&hl=en&oi=ao), [Anaïs Baudot](https://scholar.google.com/citations?user=rzoYM1cAAAAJ&hl=en&oi=ao), [Rita Machado de Oliveira](https://scholar.google.com/citations?user=b55XP-oAAAAJ&hl=en&oi=ao)
+
+## Funding
+
+The core of this work was developed during the EMBO scientific exchange grant 10987 carried out by Estefania Torrejón. Additional work was supported by the Research Unit iNOVA4Health (UID/4462/2025) and by the Associated Laboratory LS4FUTURE (LA/P/0087/2020), both financially supported by Fundação para a Ciência e Tecnologia / Ministério da Educação, Ciência e Inovação, and the EVCA Twinning Project (Horizon GA n° 101079264) financially supported by the European Union. The aims of this study contribute to the ERDERA project (participant: Anaïs Baudot), which has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement N°101156595. AB was also supported by France 2030 state funding managed by the National Research Agency with the reference "ANR-22-PESN-0013".
+Estefania's PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/202.
 
 ## References
 
 **Pre-print in preparation**
 
-Nichenet: Browaeys, R., Saelens, W. & Saeys, Y. NicheNet: modeling intercellular communication by linking ligands to target genes. Nat Methods (2019) doi:10.1038/s41592-019-0667-5
+NicheNet: Browaeys, R., Saelens, W. & Saeys, Y. NicheNet: modeling intercellular communication by linking ligands to target genes. Nat Methods (2019) doi:10.1038/s41592-019-0667-5

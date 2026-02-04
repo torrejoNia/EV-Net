@@ -7,16 +7,16 @@
 \format{
 A list
 \describe{
-  \item{diffexp}{}
-  \describe{
-    \item{lfc}{Log fold change (treated vs untreated)}
-    \item{qval}{Fdr corrected p-value}
-    \item{gene}{Gene symbol}
-  }
-  \item{from}{Gene symbol(s) of EV_cargo(s) by which the cells were treated}
-  \item{name}{Name of the expression validation dataset}
-  \item{type}{Type of dataset based on response time: "primary", "secondary", "primary + secondary"}
-  }
+\item{diffexp}{}
+\describe{
+\item{lfc}{Log fold change (treated vs untreated)}
+\item{qval}{Fdr corrected p-value}
+\item{gene}{Gene symbol}
+}
+\item{from}{Gene symbol(s) of EV_cargo(s) by which the cells were treated}
+\item{name}{Name of the expression validation dataset}
+\item{type}{Type of dataset based on response time: "primary", "secondary", "primary + secondary"}
+}
 }
 \usage{
 expression_settings_validation

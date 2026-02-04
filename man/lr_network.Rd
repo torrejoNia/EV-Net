@@ -7,11 +7,11 @@
 \format{
 A data frame/tibble
 \describe{
-  \item{from}{the EV_cargo}
-  \item{to}{receptor of the EV_cargo}
-  \item{source}{name of data source describing the interaction}
-  \item{database}{name of the more comprehensive database the data source is part of}
-  }
+\item{from}{the EV_cargo}
+\item{to}{receptor of the EV_cargo}
+\item{source}{name of data source describing the interaction}
+\item{database}{name of the more comprehensive database the data source is part of}
+}
 }
 \usage{
 lr_network

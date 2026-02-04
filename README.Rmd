@@ -34,7 +34,7 @@ Most recently tested with R version 4.5.1.
 ## Learn more about EV-Net
 
 For detailed documentation, tutorials, and examples, visit the:
-👉 [Quarto EV-Net page](https://quarto.com)
+👉 [Quarto EV-Net page](https://torrejonia.github.io/EV-Net/)
 
 ## References
 

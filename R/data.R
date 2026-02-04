@@ -162,16 +162,3 @@
 #'   }
 #'
 "optimized_source_weights_df"
-#' Optimized hyperparameter values
-#'
-#' A list
-#'
-#' @format A list
-#' \describe{
-#'   \item{lr_sig_hub}{EV_cargo-signaling network hub correction factor}
-#'   \item{gr_hub}{gene regulatory network hub correction factor}
-#'   \item{ltf_cutoff}{cutoff on PPR scores}
-#'   \item{damping_factor}{damping factor used in the PPR algorithm}
-#'   }
-#'
-"hyperparameter_list"

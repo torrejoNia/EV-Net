@@ -7,10 +7,10 @@
 \format{
 A data frame/tibble
 \describe{
-  \item{symbol}{human gene symbol}
-  \item{entrez}{human gene entrez}
-  \item{alias}{human gene alias}
-  }
+\item{symbol}{human gene symbol}
+\item{entrez}{human gene entrez}
+\item{alias}{human gene alias}
+}
 }
 \usage{
 geneinfo_alias_human

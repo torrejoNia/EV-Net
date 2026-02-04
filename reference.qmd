@@ -7,7 +7,42 @@ format: html
 
 This page lists the key functions in **EV-Net**.
 
-```         
-library(EV-Net) 
-help(package = "EV-Net")
+````         
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(devtools)
+library(Rd2md)
+
+load_all(".")
+
+# Only exported symbols
+funs <- getNamespaceExports("EVNet")
+
+for (f in funs) {
+
+  rd_file <- file.path("man", paste0(f, ".Rd"))
+  if (!file.exists(rd_file)) next
+
+  rd <- tools::parse_Rd(rd_file)
+
+  # 1️⃣ Skip datasets
+  is_data <- any(grepl("\\\\docType\\{data\\}", rd))
+  if (is_data) next
+
+  # 2️⃣ Skip internal functions
+  is_internal <- any(grepl("\\\\keyword\\{internal\\}", rd))
+  if (is_internal) next
+
+  # ---- Render function ----
+  cat("\n\n# ", f, "\n\n")
+
+  md_file <- tempfile(fileext = ".md")
+  Rd2md::Rd2markdown(rdfile = rd_file, outfile = md_file)
+  cat(readLines(md_file), sep = "\n")
+}
 ```
+````

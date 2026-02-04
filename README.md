@@ -6,15 +6,19 @@ rmarkdown::render("README.Rmd",output_format = "md_document")
 -->
 
 <p align="center">
-  <img src="man/figures/logo.png" width="300"/>
+
+<img src="man/figures/logo.png" width="200"/>
 </p>
 
-**EV-Net: Extracellular vesicles-mediated intercellular communication networks.** EV-Net enables the exploration of how extracellular vesicles (EVs) cargo influences receiving tissues of interest.
+**EV-Net: Extracellular vesicles-mediated intercellular communication
+networks.** EV-Net enables the exploration of how extracellular vesicles
+(EVs) cargo influences receiving tissues of interest.
 
 ## Installation
 
-Installation typically takes a few minutes, depending on how many dependencies are already installed on your system. You can install EV-Net (and its required dependencies) directly from GitHub:
-
+Installation typically takes a few minutes, depending on how many
+dependencies are already installed on your system. You can install
+EV-Net (and its required dependencies) directly from GitHub:
 
 ``` r
 if(!requireNamespace("devtools", quietly = TRUE)) {
@@ -24,23 +28,29 @@ if(!requireNamespace("devtools", quietly = TRUE)) {
 devtools::install_github("torrejoNia/EV-Net")
 ```
 
-EV-Net has been tested on both Windows and Linux.
-Most recently tested with R version 4.5.1.
+EV-Net has been tested on both Windows and Linux. Most recently tested
+with R version 4.5.1.
 
 ## Learn more about EV-Net
 
-For detailed documentation, tutorials, and examples, visit the:
-👉 [Quarto EV-Net page](https://quarto.com)
+For detailed documentation, tutorials, and examples, visit the: 👉
+[Quarto EV-Net page](https://torrejonia.github.io/EV-Net/)
 
 ## References
 
 **Pre-print in preparation**
 
-## Funding 
+## Funding
 
-This project was supported by the EMBO Scientific Exchange Grant 10987, which enabled Estefania Torrejón (NOVA Medical School), supervised by Rita Machado de Oliveira and Rune Matthiesen, to carry out an exchange at the Systems Biomedicine Lab led by Anaïs Baudot at the Marseille Medical Genetics Institute.
+This project was supported by the EMBO Scientific Exchange Grant 10987,
+which enabled Estefania Torrejón (NOVA Medical School), supervised by
+Rita Machado de Oliveira and Rune Matthiesen, to carry out an exchange
+at the Systems Biomedicine Lab led by Anaïs Baudot at the Marseille
+Medical Genetics Institute.
 
-Estefania Torrejón’s PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/2022.
+Estefania Torrejón’s PhD fellowship is funded by the iNOVA4Health-FCT
+fellowship UI/BD/154345/2022.
 
-Presentations in conferences were supported by the European Union Twining Project EVCA (Horizon GA n° 101079264) and International Society of Computational Biology Student Council (ISCB-SC).
-
+Presentations in conferences were supported by the European Union
+Twining Project EVCA (Horizon GA n° 101079264) and International Society
+of Computational Biology Student Council (ISCB-SC).

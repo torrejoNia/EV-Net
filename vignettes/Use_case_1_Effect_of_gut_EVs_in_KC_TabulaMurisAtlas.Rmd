@@ -30,7 +30,8 @@ library(here)
 The dataset comes from the liver (FACS) subset of the Tabula Muris Atlas (Tabula Muris Consortium, 2018). For quality control, we filtered the Seurat object to retain only features with at least 10 counts and expressed in at least 5% of either the Kupffer cell or hepatocyte populations.
 
 ```{r}
-new_seurat_object <- readRDS(url("https://zenodo.org/record/15014486/files/filtered_seurat_obj_use_case_1.rds"))
+options(timeout = 600)
+new_seurat_object <- readRDS(url("https://zenodo.org/record/15014486/files/filtered_seurat_obj_use_case_1.rds?download=1"))
 ```
 
 ### 2. Quality control of the filtered Seurat object
@@ -76,14 +77,15 @@ seurat_obj@meta.data$cell_ontology_class %>% table()
 EV-Net relies on NicheNet’s weighted networks, which contain prior knowledge about signaling and regulatory interactions. For this use case, we are loding the networks required for a mouse organism.
 
 ```{r}
+options(timeout = 600)
 organism <- "mouse"
 
 if(organism == "human"){
   lr_network <- readRDS(url("https://zenodo.org/record/7074291/files/lr_network_human_21122021.rds"))
-  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds"))
+  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds?download=1"))
 } else if(organism == "mouse"){
   lr_network <- readRDS(url("https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds"))
-  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds"))
+  weighted_networks <- readRDS(url("https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds?download=1"))
 
 }
 
@@ -168,7 +170,7 @@ gc()
 
 ### 10. Load the differentially abundant prediabetic EV cargo
 
-We load the EV cargo differentially abundant in the prediabetic condition. This includes proteins with a p-value < 0.05 and a negative log fold change, identified using an empirical Bayes t-test with limma comparing healthy and prediabetic conditions. These filtered prediabteic EV cargo will be used to assess their potential impact on the Kupffer cells.
+We load the EV cargo differentially abundant in the prediabetic condition. This includes proteins with a p-value < 0.1 and a log fold change > 1, identified using an empirical Bayes t-test with limma comparing healthy and prediabetic conditions. These filtered prediabteic EV cargo will be used to assess their potential impact on the Kupffer cells.
 
 ```{r}
 prediabetic_EV_cargo <- readRDS(url("https://zenodo.org/record/17041035/files/prediabetic_EV_cargo.rds"))

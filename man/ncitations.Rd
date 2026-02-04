@@ -7,12 +7,12 @@
 \format{
 A data frame/tibble
 \describe{
-  \item{entrez}{entrez}
-  \item{ncitations}{ncitations}
-  \item{symbol}{symbol}
-  \item{entrez_mouse}{entrez_mouse}
-  \item{symbol_mouse}{symbol_mouse}
-  }
+\item{entrez}{entrez}
+\item{ncitations}{ncitations}
+\item{symbol}{symbol}
+\item{entrez_mouse}{entrez_mouse}
+\item{symbol_mouse}{symbol_mouse}
+}
 }
 \usage{
 ncitations

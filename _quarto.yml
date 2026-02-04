@@ -1,7 +1,9 @@
 project:
   type: website
   output-dir: docs
-
+  render:
+    - "**/*.Rmd"
+    - "**/*.qmd" 
 format:
   html:
     theme: cyborg
@@ -10,7 +12,7 @@ website:
   title: "EV-Net"
   navbar:
     left:
-      - href: /
+      - href: index.html
         text: Home
       - text: Vignettes
         menu:

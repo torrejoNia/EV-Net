@@ -7,10 +7,10 @@
 \format{
 A data frame/tibble
 \describe{
-  \item{symbol}{mouse gene symbol}
-  \item{entrez}{mouse gene entrez}
-  \item{alias}{mouse gene alias}
-  }
+\item{symbol}{mouse gene symbol}
+\item{entrez}{mouse gene entrez}
+\item{alias}{mouse gene alias}
+}
 }
 \usage{
 geneinfo_alias_mouse

@@ -7,9 +7,9 @@
 \format{
 A data frame/tibble
 \describe{
-  \item{source}{name of data source}
-  \item{weight}{weight associated to a data source}
-  }
+\item{source}{name of data source}
+\item{weight}{weight associated to a data source}
+}
 }
 \usage{
 source_weights_df

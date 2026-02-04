@@ -7,10 +7,10 @@
 \format{
 A data frame/tibble
 \describe{
-  \item{source}{name of data source}
-  \item{avg_weight}{weight associated to a data source, averaged over cross-validation folds}
-  \item{median_weight}{weight associated to a data source, averaged over cross-validation folds}
-  }
+\item{source}{name of data source}
+\item{avg_weight}{weight associated to a data source, averaged over cross-validation folds}
+\item{median_weight}{weight associated to a data source, averaged over cross-validation folds}
+}
 }
 \usage{
 optimized_source_weights_df

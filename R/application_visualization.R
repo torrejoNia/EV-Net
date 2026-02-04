@@ -174,7 +174,11 @@ diagrammer_format_signaling_graph = function(signaling_graph_list, EV_cargo_all,
 #' @usage
 #' infer_supporting_datasources(signaling_graph_list,lr_network, sig_network, gr_network)
 #'
-#' @inheritParams construct_weighted_networks
+#' @param lr_network A data frame / tibble containing ligand-receptor interactions (required columns: from, to, source)
+#' @param sig_network A data frame / tibble containing signaling interactions (required columns: from, to, source)
+#' @param gr_network A data frame / tibble containing gene regulatory interactions (required columns: from, to, source)
+#' @param source_weights_df A data frame / tibble containing the weights associated to each individual data source. Sources with higher weights will contribute more to the final model performance (required columns: source, weight). Note that only interactions described by sources included here, will be retained during model construction.
+#' @param n_output_networks The number of output networks to return: 2 (ligand-signaling and gene regulatory; default) or 3 (ligand-receptor, signaling and gene regulatory).
 #' @inheritParams diagrammer_format_signaling_graph
 #'
 #' @return A tibble with columns from, to, source and layer
