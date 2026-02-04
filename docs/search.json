@@ -1,0 +1,331 @@
+[
+  {
+    "objectID": "reference.html",
+    "href": "reference.html",
+    "title": "reference",
+    "section": "",
+    "text": "This page lists the key functions in EV-Net.\n\n\n::: {.cell}\n::: {.cell-output .cell-output-stdout}\n\n```\n\n\n#  infer_supporting_datasources \n```\n\n\n:::\n\n::: {.cell-output .cell-output-stdout}"
+  },
+  {
+    "objectID": "reference.html#description",
+    "href": "reference.html#description",
+    "title": "reference",
+    "section": "Description",
+    "text": "Description\ninfer_supporting_datasources Get the data sources that support the specific interactions in the extracted EV_cargo-target signaling subnetwork"
+  },
+  {
+    "objectID": "reference.html#usage",
+    "href": "reference.html#usage",
+    "title": "reference",
+    "section": "Usage",
+    "text": "Usage\ninfer_supporting_datasources(signaling_graph_list,lr_network, sig_network, gr_network)"
+  },
+  {
+    "objectID": "reference.html#arguments",
+    "href": "reference.html#arguments",
+    "title": "reference",
+    "section": "Arguments",
+    "text": "Arguments\n\nsignaling_graph_list: A list of two elements: sig: a data frame/ tibble containg weighted EV_cargo-receptor and signaling interactions (from, to, weight); and gr: a data frame/tibble containng weighted gene regulatory interactions (from, to, weight)\nlr_network: A data frame / tibble containing ligand-receptor interactions (required columns: from, to, source)\nsig_network: A data frame / tibble containing signaling interactions (required columns: from, to, source)\ngr_network: A data frame / tibble containing gene regulatory interactions (required columns: from, to, source)\nsource_weights_df: A data frame / tibble containing the weights associated to each individual data source. Sources with higher weights will contribute more to the final model performance (required columns: source, weight). Note that only interactions described by sources included here, will be retained during model construction.\nn_output_networks: The number of output networks to return: 2 (ligand-signaling and gene regulatory; default) or 3 (ligand-receptor, signaling and gene regulatory)."
+  },
+  {
+    "objectID": "reference.html#value",
+    "href": "reference.html#value",
+    "title": "reference",
+    "section": "Value",
+    "text": "Value\nA tibble with columns from, to, source and layer"
+  },
+  {
+    "objectID": "reference.html#examples",
+    "href": "reference.html#examples",
+    "title": "reference",
+    "section": "Examples",
+    "text": "Examples\nweighted_networks = construct_weighted_networks(lr_network, sig_network, gr_network,source_weights_df)\nEV_cargo = list(\"TNF\",\"BMP2\",c(\"IL4\",\"IL13\"))\nEV_cargo_tf_matrix = construct_EV_cargo_tf_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0.99, algorithm = \"PPR\", damping_factor = 0.5,EV_cargo_as_cols = TRUE)\nall_EV_cargo = c(\"BMP2\")\nall_targets = c(\"HEY1\")\ntop_n_regulators = 2\nEV_cargo_target_signaling_list = get_EV_cargo_signaling_path(EV_cargo_tf_matrix,all_EV_cargo,all_targets,top_n_regulators,weighted_networks)\ndata_source_info_network = infer_supporting_datasources(EV_cargo_target_signaling_list, lr_network, sig_network, gr_network)"
+  },
+  {
+    "objectID": "reference.html#description-1",
+    "href": "reference.html#description-1",
+    "title": "reference",
+    "section": "Description",
+    "text": "Description\nmake_heatmap_ggplot Make a ggplot heatmap object from an input matrix containing continuous values. Two-color scale from white to color of choice."
+  },
+  {
+    "objectID": "reference.html#usage-1",
+    "href": "reference.html#usage-1",
+    "title": "reference",
+    "section": "Usage",
+    "text": "Usage\nmake_heatmap_ggplot(matrix, y_name, x_name, y_axis = TRUE,x_axis = TRUE, x_axis_position = \"top\", legend_position = \"top\", color = \"blue\", legend_title = \"score\",...)"
+  },
+  {
+    "objectID": "reference.html#arguments-1",
+    "href": "reference.html#arguments-1",
+    "title": "reference",
+    "section": "Arguments",
+    "text": "Arguments\n\nmatrix: Matrix with continuous values to plot in heatmap\ny_name: Title of the y-axis\nx_name: Title of the x-axis\ny_axis: Should y-axis label names and titles be displayed? TRUE or FALSE. Default: TRUE.\nx_axis: Should x-axis label names and titles be displayed? TRUE or FALSE. Default: TRUE.\nx_axis_position: X-axis position: “top” or “bottomm”; only relevant if x_axis == TRUE. Default:“top”.\nlegend_position: Legend position: “top”, “bottom”, “left”, “right” or “none”. Default: “top”.\ncolor: Color for highest continuous value in heatmap. Color gradient will go from “whitesmoke” to this color. Default: “blue”.\nlegend_title: Title of the legend.\n...: Optional arguments passed to element_text(); used to set font type and size of axis labels and titles."
+  },
+  {
+    "objectID": "reference.html#value-1",
+    "href": "reference.html#value-1",
+    "title": "reference",
+    "section": "Value",
+    "text": "Value\nA ggplot object displaying a heatmap"
+  },
+  {
+    "objectID": "reference.html#examples-1",
+    "href": "reference.html#examples-1",
+    "title": "reference",
+    "section": "Examples",
+    "text": "Examples\nlibrary(dplyr)\nweighted_networks = construct_weighted_networks(lr_network, sig_network, gr_network,source_weights_df)\nEV_cargo = list(\"TNF\",\"BMP2\",c(\"IL4\",\"IL13\"))\nEV_cargo_target_matrix = construct_EV_cargo_target_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0.99, algorithm = \"PPR\", damping_factor = 0.5,EV_cargo_as_cols = TRUE)\np = make_heatmap_ggplot(EV_cargo_target_matrix[1:50,] %&gt;% t(), y_name = \"EV_cargo\", x_name = \"target\")"
+  },
+  {
+    "objectID": "reference.html#description-2",
+    "href": "reference.html#description-2",
+    "title": "reference",
+    "section": "Description",
+    "text": "Description\ndiagrammer_format_signaling_graph Prepare extracted EV_cargo-target signaling network for visualization with DiagrammeR."
+  },
+  {
+    "objectID": "reference.html#usage-2",
+    "href": "reference.html#usage-2",
+    "title": "reference",
+    "section": "Usage",
+    "text": "Usage\ndiagrammer_format_signaling_graph(signaling_graph_list, EV_cargo_all,targets_all, sig_color = \"steelblue\", gr_color = \"orange\")"
+  },
+  {
+    "objectID": "reference.html#arguments-2",
+    "href": "reference.html#arguments-2",
+    "title": "reference",
+    "section": "Arguments",
+    "text": "Arguments\n\nsignaling_graph_list: A list of two elements: sig: a data frame/ tibble containg weighted EV_cargo-receptor and signaling interactions (from, to, weight); and gr: a data frame/tibble containng weighted gene regulatory interactions (from, to, weight)\nEV_cargo_all: A character vector of one or more EV_cargo of interest\ntargets_all: A character vector of one or more target genes of interest\nsig_color: The color for EV_cargo-signaling edges and the EV_cargo node. Default: steelblue.\ngr_color: The color for the gene regulatory edges and the target node. Default: orange."
+  },
+  {
+    "objectID": "reference.html#value-2",
+    "href": "reference.html#value-2",
+    "title": "reference",
+    "section": "Value",
+    "text": "Value\nA DiagrammeR Graph object ready for visualization via DiagrammeR::render_graph."
+  },
+  {
+    "objectID": "reference.html#examples-2",
+    "href": "reference.html#examples-2",
+    "title": "reference",
+    "section": "Examples",
+    "text": "Examples\nweighted_networks = construct_weighted_networks(lr_network, sig_network, gr_network,source_weights_df)\nEV_cargo = list(\"TNF\",\"BMP2\",c(\"IL4\",\"IL13\"))\nEV_cargo_tf_matrix = construct_EV_cargo_tf_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0.99, algorithm = \"PPR\", damping_factor = 0.5,EV_cargo_as_cols = TRUE)\nall_EV_cargo = c(\"BMP2\")\nall_targets = c(\"HEY1\")\ntop_n_regulators = 2\nEV_cargo_target_signaling_list = get_EV_cargo_signaling_path(EV_cargo_tf_matrix,all_EV_cargo,all_targets,top_n_regulators,weighted_networks)\ngraph = diagrammer_format_signaling_graph(EV_cargo_target_signaling_list, all_EV_cargo,all_targets)\n# DiagrammeR::render_graph(graph, layout = \"tree\")"
+  },
+  {
+    "objectID": "reference.html#description-3",
+    "href": "reference.html#description-3",
+    "title": "reference",
+    "section": "Description",
+    "text": "Description\nget_EV_cargo_signaling_path Extract possible signaling paths between a EV_cargo and target gene of interest. The most highly weighted path(s) will be extracted."
+  },
+  {
+    "objectID": "reference.html#usage-3",
+    "href": "reference.html#usage-3",
+    "title": "reference",
+    "section": "Usage",
+    "text": "Usage\nget_EV_cargo_signaling_path(EV_cargo_tf_matrix, EV_cargo_all, targets_all, top_n_regulators = 4, weighted_networks, EV_cargo_position = \"cols\")"
+  },
+  {
+    "objectID": "reference.html#arguments-3",
+    "href": "reference.html#arguments-3",
+    "title": "reference",
+    "section": "Arguments",
+    "text": "Arguments\n\nEV_cargo_tf_matrix: A matrix of EV_cargo-regulator probability scores\nEV_cargo_all: A character vector of one or more EV_cargo of interest\ntargets_all: A character vector of one or more target genes of interest\ntop_n_regulators: The number of top regulators that should be included in the EV_cargo-target signaling network. Top regulators are regulators that score both high for being upstream of the target gene(s) and high for being downstream of the EV_cargo. Default: 4.\nweighted_networks: A list of two elements: lr_sig: a data frame/ tibble containg weighted EV_cargo-receptor and signaling interactions (from, to, weight); and gr: a data frame/tibble containng weighted gene regulatory interactions (from, to, weight)\nEV_cargo_position: Indicate whether the EV_cargo in the EV_cargo-target matrix are in the rows (“rows”) or columns (“cols”). Default: “cols”.\nminmax_scaling: Indicate whether the weights of both dataframes should be min-max scaled between 0.75 and 1. Default: FALSE."
+  },
+  {
+    "objectID": "reference.html#value-3",
+    "href": "reference.html#value-3",
+    "title": "reference",
+    "section": "Value",
+    "text": "Value\nA list containing 2 elements (sig and gr): the integrated weighted EV_cargo-signaling and gene regulatory networks data frame / tibble format with columns: from, to, weight"
+  },
+  {
+    "objectID": "reference.html#examples-3",
+    "href": "reference.html#examples-3",
+    "title": "reference",
+    "section": "Examples",
+    "text": "Examples\nweighted_networks = construct_weighted_networks(lr_network, sig_network, gr_network,source_weights_df)\nEV_cargo = list(\"TNF\",\"BMP2\",c(\"IL4\",\"IL13\"))\nEV_cargo_tf_matrix = construct_EV_cargo_tf_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0.99, algorithm = \"PPR\", damping_factor = 0.5,EV_cargo_as_cols = TRUE)\nall_EV_cargo = c(\"BMP2\")\nall_targets = c(\"HEY1\")\ntop_n_regulators = 2\nEV_cargo_target_signaling_list = get_EV_cargo_signaling_path(EV_cargo_tf_matrix,all_EV_cargo,all_targets,top_n_regulators,weighted_networks)"
+  },
+  {
+    "objectID": "reference.html#description-4",
+    "href": "reference.html#description-4",
+    "title": "reference",
+    "section": "Description",
+    "text": "Description\npredict_EV_cargo_activities Predict activities of EV_cargo in regulating expression of a gene set of interest. Ligand activities are defined as how well they predict the observed transcriptional response (i.e. gene set) according to the NicheNet model."
+  },
+  {
+    "objectID": "reference.html#usage-4",
+    "href": "reference.html#usage-4",
+    "title": "reference",
+    "section": "Usage",
+    "text": "Usage\npredict_EV_cargo_activities(geneset, background_expressed_genes,EV_cargo_target_matrix, potential_EV_cargo, single = TRUE,...)"
+  },
+  {
+    "objectID": "reference.html#arguments-4",
+    "href": "reference.html#arguments-4",
+    "title": "reference",
+    "section": "Arguments",
+    "text": "Arguments\n\ngeneset: Character vector of the gene symbols of genes of which the expression is potentially affected by EV_cargo from the interacting cell.\nbackground_expressed_genes: Character vector of gene symbols of the background, non-affected, genes (can contain the symbols of the affected genes as well).\nEV_cargo_target_matrix: The NicheNet EV_cargo-target matrix denoting regulatory potential scores between EV_cargo and targets (EV_cargo in columns).\npotential_EV_cargo: Character vector giving the gene symbols of the potentially active EV_cargo you want to define EV_cargo activities for.\nsingle: TRUE if you want to calculate EV_cargo activity scores by considering every EV_cargo individually (recommended). FALSE if you want to calculate EV_cargo activity scores as variable importances of a multi-EV_cargo classification model.\n...: Additional parameters for get_multi_EV_cargo_importances if single = FALSE."
+  },
+  {
+    "objectID": "reference.html#value-4",
+    "href": "reference.html#value-4",
+    "title": "reference",
+    "section": "Value",
+    "text": "Value\nA tibble giving several EV_cargo activity scores. Following columns in the tibble: $test_EV_cargo, $auroc, $aupr and $pearson."
+  },
+  {
+    "objectID": "reference.html#examples-4",
+    "href": "reference.html#examples-4",
+    "title": "reference",
+    "section": "Examples",
+    "text": "Examples\nweighted_networks = construct_weighted_networks(lr_network, sig_network, gr_network,source_weights_df)\nEV_cargo = list(\"TNF\",\"BMP2\",\"IL4\")\nEV_cargo_target_matrix = construct_EV_cargo_target_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0, algorithm = \"PPR\", damping_factor = 0.5, secondary_targets = FALSE)\npotential_EV_cargo = c(\"TNF\",\"BMP2\",\"IL4\")\ngeneset = c(\"SOCS2\",\"SOCS3\", \"IRF1\")\nbackground_expressed_genes = c(\"SOCS2\",\"SOCS3\",\"IRF1\",\"ICAM1\",\"ID1\",\"ID2\",\"ID3\")\nEV_cargo_activities = predict_EV_cargo_activities(geneset = geneset, background_expressed_genes = background_expressed_genes, EV_cargo_target_matrix = EV_cargo_target_matrix, potential_EV_cargo = potential_EV_cargo)"
+  },
+  {
+    "objectID": "reference.html#description-5",
+    "href": "reference.html#description-5",
+    "title": "reference",
+    "section": "Description",
+    "text": "Description\nprepare_EV_cargo_target_visualization Prepare heatmap visualization of the EV_cargo-target links starting from a EV_cargo-target tibble. Get regulatory potential scores between all pairs of EV_cargo and targets documented in this tibble. For better visualization, we propose to define a quantile cutoff on the EV_cargo-target scores."
+  },
+  {
+    "objectID": "reference.html#usage-5",
+    "href": "reference.html#usage-5",
+    "title": "reference",
+    "section": "Usage",
+    "text": "Usage\nprepare_EV_cargo_target_visualization(EV_cargo_target_df, EV_cargo_target_matrix, cutoff = 0.25)"
+  },
+  {
+    "objectID": "reference.html#arguments-5",
+    "href": "reference.html#arguments-5",
+    "title": "reference",
+    "section": "Arguments",
+    "text": "Arguments\n\nEV_cargo_target_df: Tibble with columns ‘EV_cargo’, ‘target’ and ‘weight’ to indicate EV_cargo-target regulatory potential scores of interest.\nEV_cargo_target_matrix: The NicheNet EV_cargo-target matrix denoting regulatory potential scores between EV_cargo and targets (EV_cargo in columns).\ncutoff: Quantile cutoff on the EV_cargo-target scores of the input weighted EV_cargo-target network. Scores under this cutoff will be set to 0."
+  },
+  {
+    "objectID": "reference.html#value-5",
+    "href": "reference.html#value-5",
+    "title": "reference",
+    "section": "Value",
+    "text": "Value\nA matrix giving the EV_cargo-target regulatory potential scores between EV_cargo of interest and their targets genes part of the gene set of interest."
+  },
+  {
+    "objectID": "reference.html#examples-5",
+    "href": "reference.html#examples-5",
+    "title": "reference",
+    "section": "Examples",
+    "text": "Examples\nweighted_networks = construct_weighted_networks(lr_network, sig_network, gr_network,source_weights_df)\nEV_cargo = list(\"TNF\",\"BMP2\",\"IL4\")\nEV_cargo_target_matrix = construct_EV_cargo_target_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0, algorithm = \"PPR\", damping_factor = 0.5, secondary_targets = FALSE)\ngeneset = c(\"SOCS2\",\"SOCS3\", \"IRF1\")\nbackground_expressed_genes = c(\"SOCS2\",\"SOCS3\",\"IRF1\",\"ICAM1\",\"ID1\",\"ID2\",\"ID3\")\nactive_EV_cargo_target_links_df = potential_EV_cargo %&gt;% lapply(get_weighted_EV_cargo_target_links, geneset = geneset, EV_cargo_target_matrix = EV_cargo_target_matrix, n = 250) %&gt;% bind_rows()\nactive_EV_cargo_target_links = prepare_EV_cargo_target_visualization(EV_cargo_target_df = active_EV_cargo_target_links_df, EV_cargo_target_matrix = EV_cargo_target_matrix, cutoff = 0.25)"
+  },
+  {
+    "objectID": "reference.html#description-6",
+    "href": "reference.html#description-6",
+    "title": "reference",
+    "section": "Description",
+    "text": "Description\nget_weighted_EV_cargo_target_links Infer active EV_cargo target links between possible EV_cargo and genes belonging to a gene set of interest: consider the intersect between the top n targets of a EV_cargo and the gene set."
+  },
+  {
+    "objectID": "reference.html#usage-6",
+    "href": "reference.html#usage-6",
+    "title": "reference",
+    "section": "Usage",
+    "text": "Usage\nget_weighted_EV_cargo_target_links(EV_cargo, geneset,EV_cargo_target_matrix,n = 250)"
+  },
+  {
+    "objectID": "reference.html#arguments-6",
+    "href": "reference.html#arguments-6",
+    "title": "reference",
+    "section": "Arguments",
+    "text": "Arguments\n\nEV_cargo: Character vector giving the gene symbols of the potentially active EV_cargo for which you want to find target genes.\ngeneset: Character vector of the gene symbols of genes of which the expression is potentially affected by EV_cargo from the interacting cell.\nEV_cargo_target_matrix: The NicheNet EV_cargo-target matrix denoting regulatory potential scores between EV_cargo and targets (EV_cargo in columns).\nn: The top n of targets per EV_cargo that will be considered. Default: 250."
+  },
+  {
+    "objectID": "reference.html#value-6",
+    "href": "reference.html#value-6",
+    "title": "reference",
+    "section": "Value",
+    "text": "Value\nA tibble with columns EV_cargo, target and weight (i.e. regulatory potential score)."
+  },
+  {
+    "objectID": "reference.html#examples-6",
+    "href": "reference.html#examples-6",
+    "title": "reference",
+    "section": "Examples",
+    "text": "Examples\nweighted_networks = construct_weighted_networks(lr_network, sig_network, gr_network,source_weights_df)\nEV_cargo = list(\"TNF\",\"BMP2\",\"IL4\")\nEV_cargo_target_matrix = construct_EV_cargo_target_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0, algorithm = \"PPR\", damping_factor = 0.5, secondary_targets = FALSE)\npotential_EV_cargo = \"TNF\"\ngeneset = c(\"SOCS2\",\"SOCS3\", \"IRF1\")\nactive_EV_cargo_target_links_df = get_weighted_EV_cargo_target_links(EV_cargo = potential_EV_cargo, geneset = geneset, EV_cargo_target_matrix = EV_cargo_target_matrix, n = 250)\n\n\n:::\n:::"
+  },
+  {
+    "objectID": "vignettes/Use_case_2_Effect_of_LPC_treated_microglia_EVs_on_microglia.html",
+    "href": "vignettes/Use_case_2_Effect_of_LPC_treated_microglia_EVs_on_microglia.html",
+    "title": "Use case 2: Effect of LPS treated microglia EVs in healthy microglia",
+    "section": "",
+    "text": "This use case explores the effects of EV cargo derived from LPS-treated microglia on healthy microglia.\n\n0. Load required packages\n\nlibrary(Seurat)\nlibrary(SeuratObject)\nlibrary(tidyverse)\nlibrary(dplyr)\nlibrary(here)\n\nWarning in readLines(f, n): incomplete final line found on\n'/home/estefaniatn/embo/EV-Net/DESCRIPTION'\n\n\n\n\n1. Load microglia EVs proteomics file\nThe dataset used in this vignette originates from Santiago et al. (2023), “Identification of State-Specific Proteomic and Transcriptomic Signatures of Microglia-Derived Extracellular Vesicles.” It comprises EVs proteomics data from LPS-stimulated microglia and RNA-seq data from recipient (healthy) microglia exposed to these EVs.\n\nLPS_microglia_EVs &lt;- read.csv(url(\"https://zenodo.org/records/17391831/files/LPS_microglia_EVs.csv?download=1\"), stringsAsFactors = FALSE)\n\n\n\n2. Extracting the LPS_EV_cargo (more abundant in LPS treated microglia)\n\nLPS_EV_cargo &lt;- LPS_microglia_EVs %&gt;%\n  filter(diff.LPS.Control &gt; 0, Pr..F. &lt; 0.1) %&gt;%\n  pull(X)\n\n\n\n3. Importing receiving microglia expression dataset\n\nreceiving_microglia_expression &lt;- readRDS(url(\"https://zenodo.org/records/17581185/files/receiving_microglia_expression.rds?download=1\"))\n\n\n\n4. Defining expressed genes in receiver microglia\n\nexpressed_genes_receiver &lt;- receiving_microglia_expression$UniProt\n\n\n\n5. Loading Nichenet networks from Zenodo\n\noptions(timeout = 600)\norganism &lt;- \"mouse\"\n\nif(organism == \"human\"){\n  lr_network &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/lr_network_human_21122021.rds\"))\n  weighted_networks &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds?download=1\"))\n} else if(organism == \"mouse\"){\n  lr_network &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds\"))\n  weighted_networks &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds?download=1\"))\n  \n}\n\nlr_network &lt;- lr_network %&gt;% distinct(from, to)\nhead(lr_network)\n\n# A tibble: 6 × 2\n  from          to   \n  &lt;chr&gt;         &lt;chr&gt;\n1 2300002M23Rik Ddr1 \n2 2610528A11Rik Gpr15\n3 9530003J23Rik Itgal\n4 a             Atrn \n5 a             F11r \n6 a             Mc1r \n\n\n\n\n6. Download and load the EV-Net EV_cargo_target_matrix\nDownload it from https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds and load it into your R environment.\n\nEV_cargo_target_matrix &lt;- readRDS(\"~/embo/Netiev/EV_cargo_target_matrix.rds\")\n#Replace file path with the path in which you stored the EV_cargo_target_matrix rds file\n\n\n\n7. Define expressed interactors and the potential EV cargo\nIn this step, we identify expressed interactors, which are all proteins expressed in the receiving cell populations, including receptors, downstream signaling proteins, and transcription factors, that could potentially interact with the potential EV cargo (actual EV cargo will be defined in a following step). These expressed interactors will be used to link EV cargo to target genes in downstream analyses.\n\nall_genes &lt;- unique(rownames(EV_cargo_target_matrix))  \nexpressed_interactors &lt;- intersect(all_genes, expressed_genes_receiver)\n\nlr_sig &lt;- weighted_networks[[\"lr_sig\"]]\ngr &lt;- weighted_networks[[\"gr\"]]\n\npotential_EV_cargo_prot &lt;- lr_sig[lr_sig$to %in% expressed_interactors, \"from\"]\npotential_EV_cargo_tf &lt;- gr[gr$to %in% expressed_interactors, \"from\"]\npotential_EV_cargo &lt;- unique(c(potential_EV_cargo_prot$from, potential_EV_cargo_tf$from))\n\n\n\n8. Reduce the size of the EV_cargo_target_matrix\nThe EV_cargo_target_matrix is large (3.6 GB). If your system has limited RAM, it is recommended to filter the matrix to keep only the expressed genes in the receiver and the potential EV cargo, which significantly reduces its size. This step is optional for systems with 32 GB of RAM or more.\n\nEV_cargo_target_matrix &lt;- EV_cargo_target_matrix[rownames(EV_cargo_target_matrix) %in% expressed_genes_receiver, colnames(EV_cargo_target_matrix) %in% potential_EV_cargo]\n\nRelease memory using the garbage collector\n\ngc()\n\n            used   (Mb) gc trigger   (Mb)  max used   (Mb)\nNcells   3880052  207.3    7397445  395.1   5149212  275.0\nVcells 222054827 1694.2  642756220 4903.9 667876114 5095.5\n\n\n\n\n9. Define the gene set of interest\nTo define the gene set of interest, we select the genes with an adjust pvalue padj &lt; 0.1 and an average log2 fold change (avg_log2FC) ≥ 0.25.\n\ngeneset_oi &lt;- receiving_microglia_expression %&gt;%\n  filter(padj &lt; 0.1 & abs(log2FoldChange) &gt;= 0.25) %&gt;%\n  pull(UniProt)\n\n\ngeneset_oi &lt;- geneset_oi %&gt;% .[. %in% rownames(EV_cargo_target_matrix)]\n\n\n\n10. Defining background genes\nBackground genes are all genes expressed in the receiving cell populations. They provide a reference set for statistical analyses and enrichment calculations.\n\nbackground_expressed_genes &lt;- expressed_genes_receiver %&gt;% .[. %in% rownames(EV_cargo_target_matrix)]\n\n\n\n11. Get list of EV_cargo\nThe final set of EV cargo is obtained by selecting proteins that are present in both the actual LPS-derived microglia EV cargo and the list of potential EV cargo (obtained in step 7). This ensures that we focus on proteins that are differentially abundant in the LPS-activated condition and that may influence the expressed genes in the receiving microglia.\n\nEV_cargo &lt;- intersect(potential_EV_cargo, LPS_EV_cargo)\n\n\n\n12. Perform EV cargo activity analysis\n\nEV_cargo_activities &lt;- predict_EV_cargo_activities(geneset = geneset_oi,\n                                               background_expressed_genes = background_expressed_genes,\n                                               EV_cargo_target_matrix = EV_cargo_target_matrix,\n                                               potential_EV_cargo = EV_cargo)\n\nEV_cargo_activities &lt;- EV_cargo_activities %&gt;% arrange(-aupr_corrected) %&gt;% mutate(rank = rank(desc(aupr_corrected)))\nEV_cargo_activities\n\n# A tibble: 34 × 6\n   test_EV_cargo auroc   aupr aupr_corrected  pearson  rank\n   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;          &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;\n 1 Mtdh          0.524 0.0143        0.00541 0.0385       1\n 2 Sqstm1        0.503 0.0135        0.00453 0.00578      2\n 3 Dbnl          0.500 0.0127        0.00371 0.0104       3\n 4 Psmb3         0.497 0.0117        0.00274 0.0102       4\n 5 Hspa4         0.521 0.0117        0.00274 0.00571      5\n 6 Ptprc         0.538 0.0114        0.00242 0.00635      6\n 7 Psmb1         0.480 0.0112        0.00226 0.00155      7\n 8 Psmc1         0.496 0.0112        0.00224 0.00783      8\n 9 Actr1a        0.493 0.0110        0.00207 0.000736     9\n10 Ptgr1         0.537 0.0109        0.00198 0.0154      10\n# ℹ 24 more rows\n\n\n\n\n13. Visualization of top-ranked EV cargo\n\np_hist_EV_cargo_activity &lt;- ggplot(EV_cargo_activities, aes(x=aupr_corrected)) + \n  geom_histogram(color=\"black\", fill=\"darkorange\")  + \n  geom_vline(aes(xintercept=min(EV_cargo_activities %&gt;% top_n(30, aupr_corrected) %&gt;% pull(aupr_corrected))),\n             color=\"red\", linetype=\"dashed\", size=1) + \n  labs(x=\"EV cargo activity (PCC)\", y = \"# EV cargo\") +\n  theme_classic()\n\nWarning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\nℹ Please use `linewidth` instead.\n\np_hist_EV_cargo_activity\n\n\n\n\n\n\n\n\n\n\n14. We can also visualize the EV cargo activity measure (AUPR) of these top-ranked EV cargo\n\nNote: We have selected the top 30 best_upstream_EV_cargo but this number can be changed.\n\n\nbest_upstream_EV_cargo &lt;- EV_cargo_activities %&gt;% top_n(30, aupr_corrected) %&gt;% arrange(-aupr_corrected) %&gt;% pull(test_EV_cargo)\n\nvis_EV_cargo_aupr &lt;- EV_cargo_activities %&gt;% filter(test_EV_cargo %in% best_upstream_EV_cargo) %&gt;%\n  column_to_rownames(\"test_EV_cargo\") %&gt;% select(aupr_corrected) %&gt;% arrange(aupr_corrected) %&gt;% as.matrix(ncol = 1)\n\n(make_heatmap_ggplot(vis_EV_cargo_aupr,\n                     \"Prioritized EV cargo\", \"EV cargo activity\", \n                     legend_title = \"AUPR\", color = \"darkorange\") + \n    theme(axis.text.x.top = element_blank()))  \n\nWarning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.\nℹ Please use the `linewidth` argument instead.\n\n\n\n\n\n\n\n\n\n\n\n15. Infer target genes of top-ranked EV cargo\n\nactive_EV_cargo_target_links_df &lt;- best_upstream_EV_cargo %&gt;%\n  lapply(get_weighted_EV_cargo_target_links,\n         geneset = geneset_oi,\n         EV_cargo_target_matrix = EV_cargo_target_matrix,\n         n = 80) %&gt;%\n  bind_rows() %&gt;% drop_na()\n\n\nactive_EV_cargo_target_links &lt;- prepare_EV_cargo_target_visualization(\n  EV_cargo_target_df = active_EV_cargo_target_links_df,\n  EV_cargo_target_matrix = EV_cargo_target_matrix,\n  cutoff = 0.5) \n\n\norder_EV_cargo &lt;- intersect(best_upstream_EV_cargo, colnames(active_EV_cargo_target_links)) %&gt;% rev()\norder_targets &lt;- active_EV_cargo_target_links_df$target %&gt;% unique() %&gt;% intersect(rownames(active_EV_cargo_target_links))\n\nvis_EV_cargo_target &lt;- t(active_EV_cargo_target_links[order_targets,order_EV_cargo])\n\ntarget_genes_heatmap &lt;- make_heatmap_ggplot(vis_EV_cargo_target, \"Prioritized EV cargo\", \"Predicted target genes\",\n                    color = \"purple\", legend_title = \"Regulatory potential\") +\n  scale_fill_gradient2(low = \"whitesmoke\",  high = \"purple\")\n\n\ntarget_genes_heatmap\n\n\n\n\n\n\n\n\n\n\n16. Save plot (optional)\n\npng(\"target_genes_heatmap_microglia_EV_cargo_RNAseq.png\", res = 300, width = 5000, height = 2000)\nprint(target_genes_heatmap)\n\n\n\n17. Build an interaction network\nNext we will build an interaction network between one of the top-ranked EV cargo: the Mtdh protein, and two of its targets, with biological relevance for inflammation: Ddr1 and Slc7a11 (choice was made after studying the target_genes_heatmap).\nLoading Nichenet’s sig_network and gr_network from zenodo\n\nsig_network &lt;- readRDS(url(\"https://zenodo.org/records/7074291/files/signaling_network_mouse_21122021.rds\"))\ngr_network &lt;- readRDS(url(\"https://zenodo.org/records/7074291/files/gr_network_mouse_21122021.rds\"))\n\nInferring EV_cargo-to-target signaling paths\n\nEV_cargo_oi &lt;- \"Mtdh\"\ntargets_oi &lt;- c(\"Ddr1\", \"Slc7a11\")\n\nactive_signaling_network &lt;- get_EV_cargo_signaling_path(EV_cargo_all = EV_cargo_oi,\n                                                      targets_all = targets_oi, \n                                                      weighted_networks = weighted_networks,\n                                                      EV_cargo_tf_matrix = EV_cargo_target_matrix,\n                                                      top_n_regulators = 3,\n                                                      minmax_scaling = TRUE) \n\nWarning in igraph::shortest_paths(signaling_igraph, from = EV_cargo_oi, : At\nvendor/cigraph/src/paths/dijkstra.c:534 : Couldn't reach some vertices.\n\ngraph_min_max &lt;- diagrammer_format_signaling_graph(signaling_graph_list = active_signaling_network,\n                                                   EV_cargo_all = EV_cargo_oi, targets_all = targets_oi,\n                                                   sig_color = \"indianred\", gr_color = \"steelblue\")\n\nDiagrammeR::render_graph(graph_min_max, layout = \"tree\")\n\n\n\n\n# To export/draw the svg, you need to install DiagrammeRsvg\n#graph_svg &lt;- DiagrammeRsvg::export_svg(DiagrammeR::render_graph(graph_min_max, layout = \"tree\", output = \"graph\"))\n#cowplot::ggdraw() + cowplot::draw_image(charToRaw(graph_svg))\n\nOptional: Create a dataframe with annotations of collected data sources supporting the interactions in this network.\n\ndata_source_network &lt;- infer_supporting_datasources(signaling_graph_list = active_signaling_network,\n                                                    lr_network = lr_network, sig_network = sig_network, gr_network = gr_network)\nhead(data_source_network) \n\n# A tibble: 6 × 5\n  from  to      source                                database             layer\n  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;                                 &lt;chr&gt;                &lt;chr&gt;\n1 Cebpd Slc7a11 harmonizome_CHEA                      harmonizome_gr       regu…\n2 Cebpd Slc7a11 harmonizome_ENCODE                    harmonizome_gr       regu…\n3 Cebpd Slc7a11 harmonizome_TRANSFAC_CUR              harmonizome_gr       regu…\n4 Cebpd Slc7a11 pathwaycommons_controls_expression_of pathwaycommons_expr… regu…\n5 Cebpd Slc7a11 KnockTF                               KnockTF              regu…\n6 Il1b  Ddr1    NicheNet_LT_infrequent                NicheNet_LT          regu…"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "EV-Net",
+    "section": "",
+    "text": "EV-Net: Extracellular vesicles-mediated intercellular communication networks. EV-Net enables the exploration of how extracellular vesicles (EVs) cargo influences receiving tissues of interest."
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "EV-Net",
+    "section": "Installation",
+    "text": "Installation\nInstallation typically takes a few minutes, depending on how many dependencies are already installed on your system. You can install EV-Net (and its required dependencies) directly from GitHub:\n\nif(!requireNamespace(\"devtools\", quietly = TRUE)) {\n  install.packages(\"devtools\") \n}\n\ndevtools::install_github(\"torrejoNia/EV-Net\")\n\nEV-Net was tested on both Windows and Linux (most recently tested R version: R 4.5.1)\nWe would be submitting our package to Bioconductor in the near future."
+  },
+  {
+    "objectID": "index.html#overview-of-ev-net",
+    "href": "index.html#overview-of-ev-net",
+    "title": "EV-Net",
+    "section": "Overview of EV-Net",
+    "text": "Overview of EV-Net\n\nBackground\nExtracellular vesicles (EVs) are small, bilayered vesicles that carry diverse bioactive molecules such as nucleic acids, proteins, and lipids. These vesicles play a crucial role in cell-to-cell communication, but their importance is often overlooked in communication network models. In addition to that, current tools available for studying these networks are not designed to handle EV-specific data.\nTo address this challenge, we adapted NicheNet (Browaeys et al., 2020), an existing framework for cell-to-cell communication exploration, for its use on EVs datasets.\nOriginally, NicheNet was designed to analyze cell-to-cell communication by identifying ligands driving gene expression changes via ligand-receptor interactions. Since EVs can also deliver cargo through mechanisms beyond ligand-receptor interactions, such as membrane fusion and endocytosis, we modified NicheNet for its use on EVs. This modification expanded the tool’s scope to include not only ligands, but also dowsntream proteins proteins and transcription factors, ensuring a more comprehensive analysis of EV-mediated communication.   \nNicheNet utilizes a Personalized PageRank algorithm to generate a ligand-to-target scoring matrix. This process involves random walk restarts using each ligand as a seed node to obtain the scoring for each ligand-target diffusion. To tailor this method to our needs, we modified it and applied the algorithm to not only ligands, but also the downstream signaling proteins and transcription factors. This modification generated a new protein-to-target matrix comprising 19 790 proteins (spanning ligands, downstream proteins and transcription factors) and 22 521 target genes. This new protein-to-target matrix replaced the original NicheNet ligand-to-target matrix, which only contained 1287 ligands and 22521 target genes.\n\n\nMain functionalities of EV-Net\n\nAssess the effect of EV cargo (proteins or transcripts) on gene expression in a receiving cell population across two conditions.\nEvaluate the potential impact of EV cargo (proteins or transcripts) on a receiving tissue under a single condition.\nRank the EV cargo (proteins or transcripts) based on their predicted influence on gene expression.\nInfer putative EV cargo–target links active in the system under study.\nPredict potential signaling paths between EV cargo and target genes to generate causal hypotheses and identify supporting data sources.\n\n\n\nInput and Output\nAs input, EV-Net requires the EV cargo of interest (differentially abundant proteins or differentially expressed RNA obtained from EVs) and single-cell or sorted bulk data from the receiving tissue of interest, from either human or mouse. As output, EV-Net provides a ranking of EV cargo that best explains the changes in gene expression in the receiver tissue (when comparing two conditions) or identifies EV cargo with the strongest predicted effect on the receiving tissue, along with candidate target genes likely to be regulated by these EV cargo."
+  },
+  {
+    "objectID": "index.html#tutorials",
+    "href": "index.html#tutorials",
+    "title": "EV-Net",
+    "section": "Tutorials",
+    "text": "Tutorials\nThe following vignettes demonstrate how to perform a basic EV-Net analysis. We present two use cases, each with slightly different input data, but all aimed at exploring the effect of EV cargo on the receiving tissue of interest.\n\nUse case 1: Effect of gut EVs in KC (Tabula Muris Atlas)\nUse case 2: Use case 2 Effect of LPC treated microglia EVs on microglia"
+  },
+  {
+    "objectID": "index.html#authors",
+    "href": "index.html#authors",
+    "title": "EV-Net",
+    "section": "Authors",
+    "text": "Authors\nEstefania Torrejon, Joeri Sleegers, Rune Matthiesen, Maria Paula Macedo, Anaïs Baudot, Rita Machado de Oliveira"
+  },
+  {
+    "objectID": "index.html#funding",
+    "href": "index.html#funding",
+    "title": "EV-Net",
+    "section": "Funding",
+    "text": "Funding\nThe core of this work was developed during the EMBO scientific exchange grant 10987 carried out by Estefania Torrejón. Additional work was supported by the Research Unit iNOVA4Health (UID/4462/2025) and by the Associated Laboratory LS4FUTURE (LA/P/0087/2020), both financially supported by Fundação para a Ciência e Tecnologia / Ministério da Educação, Ciência e Inovação, and the EVCA Twinning Project (Horizon GA n° 101079264) financially supported by the European Union. The aims of this study contribute to the ERDERA project (participant: Anaïs Baudot), which has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement N°101156595. AB was also supported by France 2030 state funding managed by the National Research Agency with the reference “ANR-22-PESN-0013”. Estefania’s PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/202."
+  },
+  {
+    "objectID": "index.html#references",
+    "href": "index.html#references",
+    "title": "EV-Net",
+    "section": "References",
+    "text": "References\nPre-print in preparation\nNicheNet: Browaeys, R., Saelens, W. & Saeys, Y. NicheNet: modeling intercellular communication by linking ligands to target genes. Nat Methods (2019) doi:10.1038/s41592-019-0667-5"
+  },
+  {
+    "objectID": "vignettes/Use_case_1_Effect_of_gut_EVs_in_KC_TabulaMurisAtlas.html",
+    "href": "vignettes/Use_case_1_Effect_of_gut_EVs_in_KC_TabulaMurisAtlas.html",
+    "title": "Use case 1: Effect of gut EVs in Kupffer cells (Tabula Muris)",
+    "section": "",
+    "text": "This use case investigates the impact of gut-derived EVs proteomic cargo from a prediabetic mouse model on Kupffer cells, focusing on genes that are upregulated in Kupffer cells compared to hepatocytes.\n\n0. Load required packages\n\nlibrary(Seurat)\nlibrary(SeuratObject)\nlibrary(tidyverse)\nlibrary(dplyr)\nlibrary(here)\n\nWarning in readLines(f, n): incomplete final line found on\n'/home/estefaniatn/embo/EV-Net/DESCRIPTION'\n\n\n\nLoad filtered Seurat object\n\nThe dataset comes from the liver (FACS) subset of the Tabula Muris Atlas (Tabula Muris Consortium, 2018). For quality control, we filtered the Seurat object to retain only features with at least 10 counts and expressed in at least 5% of either the Kupffer cell or hepatocyte populations.\n\noptions(timeout = 600)\nnew_seurat_object &lt;- readRDS(url(\"https://zenodo.org/record/15014486/files/filtered_seurat_obj_use_case_1.rds?download=1\"))\n\n\n\n2. Quality control of the filtered Seurat object\nAfter filtering, we perform quality control on the new Seurat object to explore the resulting subset of features and assess the composition of cell populations.\n\nnew_seurat_object@meta.data$cell_ontology_class %&gt;% table() \n\n.\n                              B cell endothelial cell of hepatic sinusoid \n                                  41                                  182 \n                          hepatocyte                         Kupffer cell \n                                 391                                   61 \n                 natural killer cell \n                                  39 \n\n\nVisualize QC metrics using a violin plot\n\nVlnPlot(new_seurat_object, features = c(\"nFeature_RNA\", \"nCount_RNA\"), ncol = 3)\n\nWarning: The `slot` argument of `FetchData()` is deprecated as of SeuratObject 5.0.0.\nℹ Please use the `layer` argument instead.\nℹ The deprecated feature was likely used in the Seurat package.\n  Please report the issue at &lt;https://github.com/satijalab/seurat/issues&gt;.\n\n\nWarning: `PackageCheck()` was deprecated in SeuratObject 5.0.0.\nℹ Please use `rlang::check_installed()` instead.\nℹ The deprecated feature was likely used in the Seurat package.\n  Please report the issue at &lt;https://github.com/satijalab/seurat/issues&gt;.\n\n\nWarning: `aes_string()` was deprecated in ggplot2 3.0.0.\nℹ Please use tidy evaluation idioms with `aes()`.\nℹ See also `vignette(\"ggplot2-in-packages\")` for more information.\nℹ The deprecated feature was likely used in the Seurat package.\n  Please report the issue at &lt;https://github.com/satijalab/seurat/issues&gt;.\n\n\nWarning: annotation$theme is not a valid theme.\nPlease use `theme()` to construct themes.\n\n\n\n\n\n\n\n\n\nVisualize cell populations using UMAP\n\nDimPlot(new_seurat_object, reduction = \"umap\")\n\n\n\n\n\n\n\n\n\n\n3. Subset cell populations of interest (Kupffer cells and hepatocytes)\nIn this step, we retain only the Kupffer cell and hepatocyte populations for downstream analysis. This allows us to focus on the relevant cell types and reduce noise from other populations.\n\nseurat_obj &lt;- subset(new_seurat_object,\n        subset = cell_ontology_class %in% c(\"Kupffer cell\", \"hepatocyte\"))\n\nWarning: Removing 267 cells missing data for vars requested\n\nIdents(object = seurat_obj) &lt;- seurat_obj@meta.data$cell_ontology_class\n\n\n\n4. Verify that only Kupffer cells and hepatocytes are retained\n\nseurat_obj@meta.data$cell_ontology_class %&gt;% table() \n\n.\n  hepatocyte Kupffer cell \n         391           61 \n\n\n\n\n5. Load NicheNet networks from Zenodo\nEV-Net relies on NicheNet’s weighted networks, which contain prior knowledge about signaling and regulatory interactions. For this use case, we are loding the networks required for a mouse organism.\n\noptions(timeout = 600)\norganism &lt;- \"mouse\"\n\nif(organism == \"human\"){\n  lr_network &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/lr_network_human_21122021.rds\"))\n  weighted_networks &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds?download=1\"))\n} else if(organism == \"mouse\"){\n  lr_network &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds\"))\n  weighted_networks &lt;- readRDS(url(\"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds?download=1\"))\n\n}\n\nlr_network &lt;- lr_network %&gt;% distinct(from, to)\nhead(lr_network)\n\n# A tibble: 6 × 2\n  from          to   \n  &lt;chr&gt;         &lt;chr&gt;\n1 2300002M23Rik Ddr1 \n2 2610528A11Rik Gpr15\n3 9530003J23Rik Itgal\n4 a             Atrn \n5 a             F11r \n6 a             Mc1r \n\n\n\n\n6. Download and load the EV-Net EV_cargo_target_matrix\nDownload it from https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds and load it into your R environment.\n\nEV_cargo_target_matrix &lt;- readRDS(\"~/embo/Netiev/EV_cargo_target_matrix.rds\")\n#Replace file path with the path in which you stored the EV_cargo_target_matrix rds file\n\n\n\n7. Define receiver cell populations and select shared features\nIn this step we extract the cells for each population (Kupffer cells and hepatocytes), get their count matrices, and identify the genes expressed in at least one cell. The two lists of genes are then combined and duplicates removed, producing a unified set of features for downstream EV cargo analysis.\n\nNote: Add an identity class label (idents) for your cell populations\n\n\n# Step 1: Extract the cells belonging to each cell type\ncells_type_1 &lt;- WhichCells(new_seurat_object, idents = \"Kupffer cell\")\ncells_type_2 &lt;- WhichCells(new_seurat_object, idents = \"hepatocyte\")\n\n# Step 2: Subset the Seurat object to get the count matrix for each cell type\ndata_matrix &lt;- GetAssayData(new_seurat_object, slot = \"counts\")\n\nWarning: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.\nℹ Please use the `layer` argument instead.\n\n# Get the features (genes) expressed in each cell type\n# Features expressed in at least one cell for cell_type_1 (Kupffer cells)\nfeatures_type_1 &lt;- rownames(data_matrix)[rowSums(data_matrix[, cells_type_1] &gt; 0) &gt; 0]\n\n# Features expressed in at least one cell for cell_type_2 (hepatocyte)\nfeatures_type_2 &lt;- rownames(data_matrix)[rowSums(data_matrix[, cells_type_2] &gt; 0) &gt; 0]\n\n# Step 3: Combine the two lists of features and remove duplicates\ncombined_features &lt;- unique(c(features_type_1, features_type_2))\n\nNext, we define our receivers\n\nreceiver = c(\"Kupffer cell\", \"hepatocyte\")\n\nexpressed_genes_receiver &lt;- combined_features\n\n\n\n8. Define expressed interactors and the potential EV cargo\nIn this step, we identify expressed interactors, which are all proteins expressed in the receiving cell populations, including receptors, downstream signaling proteins, and transcription factors, that could potentially interact with the potential EV cargo (actual EV cargo will be defined in a following step). These expressed interactors will be used to link EV cargo to target genes in downstream analyses.\n\nall_genes &lt;- unique(rownames(EV_cargo_target_matrix))  \nexpressed_interactors &lt;- intersect(all_genes, expressed_genes_receiver)\n\nlr_sig &lt;- weighted_networks[[\"lr_sig\"]]\ngr &lt;- weighted_networks[[\"gr\"]]\n\npotential_EV_cargo_prot &lt;- lr_sig[lr_sig$to %in% expressed_interactors, \"from\"]\npotential_EV_cargo_tf &lt;- gr[gr$to %in% expressed_interactors, \"from\"]\npotential_EV_cargo &lt;- unique(c(potential_EV_cargo_prot$from, potential_EV_cargo_tf$from))\n\n\n\n9. Reduce the size of the EV_cargo_target_matrix\nThe EV_cargo_target_matrix is large (3.6 GB). If your system has limited RAM, it is recommended to filter the matrix to keep only the expressed genes in the receiver and the potential EV cargo, which significantly reduces its size. This step is optional for systems with 32 GB of RAM or more.\n\nEV_cargo_target_matrix &lt;- EV_cargo_target_matrix[rownames(EV_cargo_target_matrix) %in% expressed_genes_receiver, colnames(EV_cargo_target_matrix) %in% potential_EV_cargo]\n\nRelease memory using the garbage collector\n\ngc()\n\n            used   (Mb) gc trigger   (Mb)  max used   (Mb)\nNcells   4156426  222.0    7264038  388.0   7264038  388.0\nVcells 292554148 2232.1  888043454 6775.3 738376403 5633.4\n\n\n\n\n10. Load the differentially abundant prediabetic EV cargo\nWe load the EV cargo differentially abundant in the prediabetic condition. This includes proteins with a p-value &lt; 0.1 and a log fold change &gt; 1, identified using an empirical Bayes t-test with limma comparing healthy and prediabetic conditions. These filtered prediabteic EV cargo will be used to assess their potential impact on the Kupffer cells.\n\nprediabetic_EV_cargo &lt;- readRDS(url(\"https://zenodo.org/record/17041035/files/prediabetic_EV_cargo.rds\"))\n\n\n\n11. Get list of EV_cargo\nThe final set of EV cargo is obtained by selecting proteins that are present in both the actual prediabetic EV cargo and the list of potential EV cargo (obtained in step 8). This ensures that we focus on proteins that are differentially abundant in the prediabetic condition and that may influence the expressed genes in the receiving tissue.\n\nEV_cargo &lt;- intersect(potential_EV_cargo, prediabetic_EV_cargo)\n\n\n\n12. Define the gene set of interest\nTo define the gene set of interest, we use Seurat’s FindMarkers() function to assess differential expression between our cell populations. Genes with an average log2 fold change (avg_log2FC) ≥ 0.25 are selected as upregulated in Kupffer cells.\n\ncondition_oi &lt;-  \"Kupffer cell\"\ncondition_reference &lt;- \"hepatocyte\"\n\nseurat_obj_receiver &lt;- subset(seurat_obj, idents = receiver)\n\nDE_table_receiver &lt;-  FindMarkers(object = seurat_obj,\n                                  ident.1 = condition_oi, ident.2 = condition_reference,\n                                  group.by = \"cell_ontology_class\",\n                                  min.pct = 0.05) %&gt;% rownames_to_column(\"gene\")\n\ngeneset_oi &lt;- DE_table_receiver %&gt;% filter(p_val_adj &lt;= 0.05 & avg_log2FC &gt;= 0.25) %&gt;% pull(gene)\ngeneset_oi &lt;- geneset_oi %&gt;% .[. %in% rownames(EV_cargo_target_matrix)]\n\n\n\n13. Defining background genes\nBackground genes are all genes expressed in the receiving cell populations. They provide a reference set for statistical analyses and enrichment calculations.\n\nbackground_expressed_genes &lt;- expressed_genes_receiver %&gt;% .[. %in% rownames(EV_cargo_target_matrix)]\n\n\n\n14. Perform EV cargo activity analysis\n\nEV_cargo_activities &lt;- predict_EV_cargo_activities(geneset = geneset_oi,\n                                               background_expressed_genes = background_expressed_genes,\n                                               EV_cargo_target_matrix = EV_cargo_target_matrix,\n                                               potential_EV_cargo = EV_cargo)\n\nEV_cargo_activities &lt;- EV_cargo_activities %&gt;% arrange(-aupr_corrected) %&gt;% mutate(rank = rank(desc(aupr_corrected)))\nEV_cargo_activities\n\n# A tibble: 275 × 6\n   test_EV_cargo auroc  aupr aupr_corrected pearson  rank\n   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;          &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;\n 1 Ifi35         0.561 0.154         0.0403 0.0959      1\n 2 Iars2         0.564 0.150         0.0368 0.0888      2\n 3 Gbp2          0.562 0.148         0.0350 0.0838      3\n 4 Rnpep         0.564 0.145         0.0318 0.0764      4\n 5 Psmb3         0.561 0.145         0.0317 0.0776      5\n 6 Scly          0.567 0.142         0.0289 0.0401      6\n 7 Idh1          0.564 0.142         0.0285 0.0466      7\n 8 Cops2         0.558 0.141         0.0278 0.00679     8\n 9 Pls3          0.552 0.140         0.0272 0.0675      9\n10 H2-K1         0.547 0.139         0.0254 0.0466     10\n# ℹ 265 more rows\n\n\n\n\n15. Visualization of top-ranked EV cargo\n\np_hist_EV_cargo_activity &lt;- ggplot(EV_cargo_activities, aes(x=aupr_corrected)) + \n  geom_histogram(color=\"black\", fill=\"darkorange\")  + \n  geom_vline(aes(xintercept=min(EV_cargo_activities %&gt;% top_n(10, aupr_corrected) %&gt;% pull(aupr_corrected))),\n             color=\"red\", linetype=\"dashed\", size=1) + \n  labs(x=\"EV cargo activity (PCC)\", y = \"# EV cargo\") +\n  theme_classic()\n\nWarning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\nℹ Please use `linewidth` instead.\n\np_hist_EV_cargo_activity\n\n\n\n\n\n\n\n\n\n\n16. We can also visualize the EV cargo activity measure (AUPR) of these top-ranked EV cargo\n\nNote: We have selected the top 30 best_upstream_EV_cargo but this number can be changed.\n\n\nbest_upstream_EV_cargo &lt;- EV_cargo_activities %&gt;% top_n(30, aupr_corrected) %&gt;% arrange(-aupr_corrected) %&gt;% pull(test_EV_cargo)\n\nvis_EV_cargo_aupr &lt;- EV_cargo_activities %&gt;% filter(test_EV_cargo %in% best_upstream_EV_cargo) %&gt;%\n  column_to_rownames(\"test_EV_cargo\") %&gt;% select(aupr_corrected) %&gt;% arrange(aupr_corrected) %&gt;% as.matrix(ncol = 1)\n\n(make_heatmap_ggplot(vis_EV_cargo_aupr,\n                     \"Prioritized EV cargo\", \"EV cargo activity\", \n                     legend_title = \"AUPR\", color = \"darkorange\") + \n    theme(axis.text.x.top = element_blank()))  \n\nWarning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.\nℹ Please use the `linewidth` argument instead.\n\n\n\n\n\n\n\n\n\n\n\n17. Infer target genes of top-ranked EV cargo\n\nactive_EV_cargo_target_links_df &lt;- best_upstream_EV_cargo %&gt;%\n  lapply(get_weighted_EV_cargo_target_links,\n         geneset = geneset_oi,\n         EV_cargo_target_matrix = EV_cargo_target_matrix,\n         n = 80) %&gt;%\n  bind_rows() %&gt;% drop_na()\n\n\nactive_EV_cargo_target_links &lt;- prepare_EV_cargo_target_visualization(\n  EV_cargo_target_df = active_EV_cargo_target_links_df,\n  EV_cargo_target_matrix = EV_cargo_target_matrix,\n  cutoff = 0.5) \n\n\norder_EV_cargo &lt;- intersect(best_upstream_EV_cargo, colnames(active_EV_cargo_target_links)) %&gt;% rev()\norder_targets &lt;- active_EV_cargo_target_links_df$target %&gt;% unique() %&gt;% intersect(rownames(active_EV_cargo_target_links))\n\nvis_EV_cargo_target &lt;- t(active_EV_cargo_target_links[order_targets,order_EV_cargo])\n\ntarget_genes_heatmap &lt;- make_heatmap_ggplot(vis_EV_cargo_target, \"Prioritized EV cargo\", \"Predicted target genes\",\n                    color = \"purple\", legend_title = \"Regulatory potential\") +\n  scale_fill_gradient2(low = \"whitesmoke\",  high = \"purple\")\n\n\ntarget_genes_heatmap\n\n\n\n\n\n\n\n\nSave plot (optional)\n\npng(\"target_genes_heatmap_prediabetic_EV_cargo_target_matrix_newHyper.png\", res = 300, width = 5000, height = 2000)\nprint(target_genes_heatmap)\n\n\n\n18. Build an interaction network\nNext, we build an interaction network for one of the top-ranked EV cargo, the Scly protein, and two of its biologically relevant target genes for prediabetes: Zeb2 and Foxo1. These targets were selected after examining the target_genes_heatmap to prioritize genes with potential functional significance.\nLoad Nichenet’s sig_network and gr_network from zenodo\n\nsig_network &lt;- readRDS(url(\"https://zenodo.org/records/7074291/files/signaling_network_mouse_21122021.rds\"))\ngr_network &lt;- readRDS(url(\"https://zenodo.org/records/7074291/files/gr_network_mouse_21122021.rds\"))\n\nInfer EV_cargo-to-target signaling paths\n\nEV_cargo_oi &lt;- \"Scly\"\ntargets_oi &lt;- c(\"Zeb2\", \"Foxo1\")\n\nactive_signaling_network &lt;- get_EV_cargo_signaling_path(EV_cargo_all = EV_cargo_oi,\n                                                      targets_all = targets_oi, \n                                                      weighted_networks = weighted_networks,\n                                                      EV_cargo_tf_matrix = EV_cargo_target_matrix,\n                                                      top_n_regulators = 4,\n                                                      minmax_scaling = TRUE) \n\n\ngraph_min_max &lt;- diagrammer_format_signaling_graph(signaling_graph_list = active_signaling_network,\n                                                   EV_cargo_all = EV_cargo_oi, targets_all = targets_oi,\n                                                   sig_color = \"indianred\", gr_color = \"steelblue\")\n\nDiagrammeR::render_graph(graph_min_max, layout = \"tree\")\n\n\n\n\n# To export/draw the svg, you need to install DiagrammeRsvg\n#graph_svg &lt;- DiagrammeRsvg::export_svg(DiagrammeR::render_graph(graph_min_max, layout = \"tree\", output = \"graph\"))\n#cowplot::ggdraw() + cowplot::draw_image(charToRaw(graph_svg))\n\nOptional: Create a dataframe with annotations of collected data sources supporting the interactions in this network.\n\ndata_source_network &lt;- infer_supporting_datasources(signaling_graph_list = active_signaling_network,\n                                                    lr_network = lr_network, sig_network = sig_network, gr_network = gr_network)\nhead(data_source_network) \n\n# A tibble: 6 × 5\n  from  to    source                   database       layer     \n  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                    &lt;chr&gt;          &lt;chr&gt;     \n1 Cebpb Foxo1 harmonizome_CHEA         harmonizome_gr regulatory\n2 Cebpb Foxo1 harmonizome_ENCODE       harmonizome_gr regulatory\n3 Cebpb Foxo1 regnetwork_source        regnetwork     regulatory\n4 Cebpb Zeb2  harmonizome_ENCODE       harmonizome_gr regulatory\n5 Cebpb Zeb2  harmonizome_TRANSFAC_CUR harmonizome_gr regulatory\n6 Cebpb Zeb2  ontogenet_coarse         ontogenet      regulatory"
+  },
+  {
+    "objectID": "EV-Net.html",
+    "href": "EV-Net.html",
+    "title": "EV-Net",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "EV-Net.html#quarto",
+    "href": "EV-Net.html#quarto",
+    "title": "EV-Net",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  }
+]
