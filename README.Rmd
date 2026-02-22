@@ -26,6 +26,8 @@ if(!requireNamespace("devtools", quietly = TRUE)) {
 }
 
 devtools::install_github("torrejoNia/EV-Net")
+
+library(EVNet)
 ```
 
 EV-Net has been tested on both Windows and Linux.
