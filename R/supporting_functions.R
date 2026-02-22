@@ -276,7 +276,7 @@ calculate_auc_iregulon = function(prior,response){
 
   missing = nGenes-length(geneSet)
 
-  gSetRanks = subset(rankings, rn %in% geneSet)[,!"rn", with=FALSE] # gene names are no longer needed
+  gSetRanks = subset(rankings, rn %in% geneSet)[,!("rn"), with=FALSE] # gene names are no longer needed
 
   aucThreshold = round(aucMaxRank)
   maxAUC = aucThreshold * nrow(gSetRanks)
