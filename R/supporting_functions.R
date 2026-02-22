@@ -276,14 +276,16 @@ calculate_auc_iregulon = function(prior,response){
 
   missing = nGenes-length(geneSet)
 
-  gSetRanks = subset(rankings, rn %in% geneSet)[,!("rn"), with=FALSE] # gene names are no longer needed
+  gSetRanks <- rankings[rn %in% geneSet]
+  gSetRanks[, rn := NULL] # gene names are no longer needed
 
   aucThreshold = round(aucMaxRank)
   maxAUC = aucThreshold * nrow(gSetRanks)
 
   auc_iregulon = sapply(gSetRanks, .calcAUC, aucThreshold, maxAUC)
 
-  gSetRanks_fake = subset(fake_rankings, rn %in% geneSet)[,-"rn", with=FALSE] # gene names are no longer needed
+  gSetRanks_fake <- fake_rankings[rn %in% geneSet]
+  gSetRanks_fake[, rn := NULL] # gene names are no longer needed
   auc_iregulon_fake = sapply(gSetRanks_fake, .calcAUC, aucThreshold, maxAUC)
 
   auc_iregulon_corrected = auc_iregulon - auc_iregulon_fake
