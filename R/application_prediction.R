@@ -29,16 +29,16 @@
 #'
 predict_EV_cargo_activities = function(geneset,background_expressed_genes,EV_cargo_target_matrix, potential_EV_cargo, single = TRUE,...){
   setting = list(geneset) %>%
-    lapply(convert_gene_list_settings_evaluation, name = "gene set", EV_cargo_oi = potential_EV_cargo, background = background_expressed_genes)
+    lapply(EVNet::convert_gene_list_settings_evaluation, name = "gene set", EV_cargo_oi = potential_EV_cargo, background = background_expressed_genes)
   if (single == TRUE){
     settings_EV_cargo_prediction = setting %>%
       convert_settings_EV_cargo_prediction(all_EV_cargo = potential_EV_cargo, validation = FALSE, single = TRUE)
-    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(get_single_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE) %>% bind_rows()
+    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(EVNet::get_single_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE) %>% bind_rows()
 
   } else {
     settings_EV_cargo_prediction = setting %>%
       convert_settings_EV_cargo_prediction(all_EV_cargo = potential_EV_cargo, validation = FALSE, single = FALSE)
-    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(get_multi_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE, ...) %>% bind_rows()
+    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(EVNet::get_multi_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE, ...) %>% bind_rows()
 
   }
   return(EV_cargo_importances %>% select(test_EV_cargo,auroc,aupr,aupr_corrected, pearson))
@@ -101,7 +101,7 @@ get_weighted_EV_cargo_target_links = function(EV_cargo, geneset,EV_cargo_target_
 #' EV_cargo_target_matrix = construct_EV_cargo_target_matrix(weighted_networks, EV_cargo, ltf_cutoff = 0, algorithm = "PPR", damping_factor = 0.5, secondary_targets = FALSE)
 #' geneset = c("SOCS2","SOCS3", "IRF1")
 #' background_expressed_genes = c("SOCS2","SOCS3","IRF1","ICAM1","ID1","ID2","ID3")
-#' active_EV_cargo_target_links_df = potential_EV_cargo %>% lapply(get_weighted_EV_cargo_target_links, geneset = geneset, EV_cargo_target_matrix = EV_cargo_target_matrix, n = 250) %>% bind_rows()
+#' active_EV_cargo_target_links_df = potential_EV_cargo %>% lapply(EVNet::get_weighted_EV_cargo_target_links, geneset = geneset, EV_cargo_target_matrix = EV_cargo_target_matrix, n = 250) %>% bind_rows()
 #' active_EV_cargo_target_links = prepare_EV_cargo_target_visualization(EV_cargo_target_df = active_EV_cargo_target_links_df, EV_cargo_target_matrix = EV_cargo_target_matrix, cutoff = 0.25)
 #' }
 #'
