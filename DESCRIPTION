@@ -10,7 +10,7 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/torrejoNia/EV-Net
 BugReports: https://github.com/torrejoNia/EV-Net/issues
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Depends: R (>= 4.2.0)
 Imports:
@@ -56,4 +56,3 @@ Suggests:
     parallel,
     covr,
     sf
-    
