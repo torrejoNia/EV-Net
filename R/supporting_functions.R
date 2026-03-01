@@ -197,7 +197,7 @@ filter_genes_EV_cargo_target_matrix = function(EV_cargo_target_matrix, EV_cargo_
 }
 
 construct_EV_cargo_signaling_df = function(EV_cargo_all,targets_all,k,weighted_networks,EV_cargo_tf_matrix){
-  final_combined_df = bind_rows(expand.grid(EV_cargo_all,targets_all) %>% apply(.,1,EVNet::wrappper_visualization,k,weighted_networks,EV_cargo_tf_matrix))
+  final_combined_df = bind_rows(expand.grid(EV_cargo_all,targets_all) %>% apply(.,1,EVNet:::wrappper_visualization,k,weighted_networks,EV_cargo_tf_matrix))
 }
 
 wrappper_visualization = function(grid,k,weighted_networks,EV_cargo_tf_matrix){
@@ -258,7 +258,7 @@ calculate_auc_iregulon = function(prior,response){
   colnames(prior) = genes_prior
   rownames(prior) = "EV_cargo"
 
-  prior_rank = apply(prior,1,EVNet::rank_desc)
+  prior_rank = apply(prior,1,EVNet:::rank_desc)
   rankings = tibble(prior=prior_rank[,1], rn = rownames(prior_rank))
 
   fake_rankings = rankings %>% mutate(rn = sample(rn))
@@ -281,10 +281,10 @@ calculate_auc_iregulon = function(prior,response){
   aucThreshold = round(aucMaxRank)
   maxAUC = aucThreshold * nrow(gSetRanks)
   
-  auc_iregulon = sapply(gSetRanks, EVNet::.calcAUC, aucThreshold, maxAUC)
+  auc_iregulon = sapply(gSetRanks, EVNet:::.calcAUC, aucThreshold, maxAUC)
   
   gSetRanks_fake = subset(fake_rankings, rn %in% geneSet)[,-"rn", with=FALSE] # gene names are no longer needed
-  auc_iregulon_fake = sapply(gSetRanks_fake, EVNet::.calcAUC, aucThreshold, maxAUC)
+  auc_iregulon_fake = sapply(gSetRanks_fake, EVNet:::.calcAUC, aucThreshold, maxAUC)
 
   auc_iregulon_corrected = auc_iregulon - auc_iregulon_fake
   return(list(auc_iregulon = auc_iregulon, auc_iregulon_corrected = auc_iregulon_corrected))

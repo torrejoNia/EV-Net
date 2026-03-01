@@ -29,16 +29,16 @@
 #'
 predict_EV_cargo_activities = function(geneset,background_expressed_genes,EV_cargo_target_matrix, potential_EV_cargo, single = TRUE,...){
   setting = list(geneset) %>%
-    lapply(EVNet::convert_gene_list_settings_evaluation, name = "gene set", EV_cargo_oi = potential_EV_cargo, background = background_expressed_genes)
+    lapply(EVNet:::convert_gene_list_settings_evaluation, name = "gene set", EV_cargo_oi = potential_EV_cargo, background = background_expressed_genes)
   if (single == TRUE){
     settings_EV_cargo_prediction = setting %>%
       convert_settings_EV_cargo_prediction(all_EV_cargo = potential_EV_cargo, validation = FALSE, single = TRUE)
-    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(EVNet::get_single_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE) %>% bind_rows()
+    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(EVNet:::get_single_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE) %>% bind_rows()
 
   } else {
     settings_EV_cargo_prediction = setting %>%
       convert_settings_EV_cargo_prediction(all_EV_cargo = potential_EV_cargo, validation = FALSE, single = FALSE)
-    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(EVNet::get_multi_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE, ...) %>% bind_rows()
+    EV_cargo_importances = settings_EV_cargo_prediction %>% lapply(EVNet:::get_multi_EV_cargo_importances,EV_cargo_target_matrix = EV_cargo_target_matrix, known = FALSE, ...) %>% bind_rows()
 
   }
   return(EV_cargo_importances %>% select(test_EV_cargo,auroc,aupr,aupr_corrected, pearson))
