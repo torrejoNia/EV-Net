@@ -25,6 +25,7 @@
 #' EV_cargo_activities = predict_EV_cargo_activities(geneset = geneset, background_expressed_genes = background_expressed_genes, EV_cargo_target_matrix = EV_cargo_target_matrix, potential_EV_cargo = potential_EV_cargo)
 #' }
 #'
+#' @import data.table
 #' @export
 #'
 predict_EV_cargo_activities = function(geneset,background_expressed_genes,EV_cargo_target_matrix, potential_EV_cargo, single = TRUE,...){
