@@ -6,6 +6,8 @@
 \alias{EVNet-package}
 \title{EVNet: Extracellular vesicles-mediated intercellular communication networks}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 This package allow to explore the predicted effect of EVs proteomic or transcriptomic cargo in their recipient tissue of interest.
 }
 \seealso{

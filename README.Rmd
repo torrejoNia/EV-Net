@@ -14,11 +14,14 @@ rmarkdown::render("README.Rmd",output_format = "md_document")
   <img src="man/figures/logo.png" width="200"/>
 </p>
 
-**EV-Net: Extracellular vesicles-mediated intercellular communication networks.** EV-Net enables the exploration of how extracellular vesicles (EVs) cargo influences receiving tissues of interest.
+**EV-Net: A computational framework to model extracellular vesicles-mediated communication.** 
+EV-Net enables the identification and prioritization of EV cargo molecules with high regulatory potential in a recipient tissue of interest.
 
 ## Installation
 
-Installation typically takes a few minutes, depending on how many dependencies are already installed on your system. You can install EV-Net (and its required dependencies) directly from GitHub:
+EV-Net is an R package that requires R version 4.3.2 or higher for installation.
+
+Installation time depends on the number of dependencies already installed. In our testing, it ranged from approximately 5 to 20 minutes. You can install EV-Net (and its required dependencies) directly from GitHub:
 
 ```{r gh-installation, eval = FALSE}
 if(!requireNamespace("devtools", quietly = TRUE)) {
@@ -30,13 +33,16 @@ devtools::install_github("torrejoNia/EV-Net")
 library(EVNet)
 ```
 
-EV-Net has been tested on both Windows and Linux.
-Most recently tested with R version 4.5.1.
+EV-Net has been tested on Windows, Linux and MacOS. Most recently tested with R version 4.5.2.
 
 ## Learn more about EV-Net
 
 For detailed documentation, tutorials, and examples, visit the:
 👉 [Quarto EV-Net page](https://torrejonia.github.io/EV-Net/)
+
+## Authors
+
+[Estefania Torrejón](https://scholar.google.com/citations?user=c5RvnlUAAAAJ&hl=en&oi=ao), [Joeri Sleegers](https://scholar.google.com/citations?user=hRSv5kwAAAAJ&hl=en&oi=ao), [Rune Matthiesen](https://scholar.google.com/citations?user=tsjn1BcAAAAJ&hl=en&oi=ao), [Maria Paula Macedo](https://scholar.google.com/citations?user=qjZpKj0AAAAJ&hl=en&oi=ao), [Anaïs Baudot](https://scholar.google.com/citations?user=rzoYM1cAAAAJ&hl=en&oi=ao), [Rita Machado de Oliveira](https://scholar.google.com/citations?user=b55XP-oAAAAJ&hl=en&oi=ao)
 
 ## References
 
@@ -44,9 +50,11 @@ For detailed documentation, tutorials, and examples, visit the:
 
 ## Funding 
 
-This project was supported by the EMBO Scientific Exchange Grant 10987, which enabled Estefania Torrejón (NOVA Medical School), supervised by Rita Machado de Oliveira and Rune Matthiesen, to carry out an exchange at the Systems Biomedicine Lab led by Anaïs Baudot at the Marseille Medical Genetics Institute.
+The core of this work was developed during the EMBO scientific exchange grant 10987 carried out by Estefania Torrejón. Additional work was supported by the Research Unit iNOVA4Health (UID/4462/2025) and by the Associated Laboratory LS4FUTURE (LA/P/0087/2020), both financially supported by Fundação para a Ciência e Tecnologia / Ministério da Educação, Ciência e Inovação, and the EVCA Twinning Project (Horizon GA n° 101079264) financially supported by the European Union.
 
-Estefania Torrejón’s PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/2022.
+The aims of this study contribute to the ERDERA project (participant: Anaïs Baudot), which has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement N°101156595.  Anaïs Baudot was also supported by France 2030 state funding managed by the National Research Agency with the reference "ANR-22-PESN-0013".
+
+Estefania's PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/202.
 
 Presentations in conferences were supported by the European Union Twining Project EVCA (Horizon GA n° 101079264) and International Society of Computational Biology Student Council (ISCB-SC).
 

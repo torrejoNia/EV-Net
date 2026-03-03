@@ -199,34 +199,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This use case investigates the impact of gut-derived EVs proteomic cargo from a prediabetic mouse model on Kupffer cells, focusing on genes that are upregulated in Kupffer cells compared to hepatocytes.</p>
+<p>We applied EV-Net to investigate the impact of gut-derived EV cargo from a prediabetic mouse model on the liver-resident macrophages, Kupffer cells, as the recipient tissue of interest. We focused on genes that are upregulated in Kupffer cells compared to hepatocytes.</p>
 <section id="load-required-packages" class="level3">
 <h3 class="anchored" data-anchor-id="load-required-packages">0. Load required packages</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SeuratObject)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in readLines(f, n): incomplete final line found on
-'/home/estefaniatn/embo/EV-Net/DESCRIPTION'</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(EVNet)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SeuratObject)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
 <li>Load filtered Seurat object</li>
 </ol>
-<p>The dataset comes from the liver (FACS) subset of the Tabula Muris Atlas (Tabula Muris Consortium, 2018). For quality control, we filtered the Seurat object to retain only features with at least 10 counts and expressed in at least 5% of either the Kupffer cell or hepatocyte populations.</p>
+<p>The dataset comes from the liver (FACS) subset of the Tabula Muris Atlas (Tabula Muris Consortium, 2018). For quality control, we filtered the Seurat object to retain only genes with at least 10 counts and expressed in at least 5% of either the Kupffer cell or hepatocyte populations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">600</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>new_seurat_object <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/15014486/files/filtered_seurat_obj_use_case_1.rds?download=1"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">600</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>new_seurat_object <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/15014486/files/filtered_seurat_obj_use_case_1.rds?download=1"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="quality-control-of-the-filtered-seurat-object" class="level3">
 <h3 class="anchored" data-anchor-id="quality-control-of-the-filtered-seurat-object">2. Quality control of the filtered Seurat object</h3>
-<p>After filtering, we perform quality control on the new Seurat object to explore the resulting subset of features and assess the composition of cell populations.</p>
+<p>After filtering, we perform quality control on the new Seurat object to explore the resulting subset of genes and assess the composition of cell populations. <strong>NOTE: SeuratObject version 5.1.0 or higher and Seurat version 5.3.0 or higher are required to ensure proper execution of the code chunks.</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>new_seurat_object<span class="sc">@</span>meta.data<span class="sc">$</span>cell_ontology_class <span class="sc">%&gt;%</span> <span class="fu">table</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>new_seurat_object<span class="sc">@</span>meta.data<span class="sc">$</span>cell_ontology_class <span class="sc">%&gt;%</span> <span class="fu">table</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>.
                               B cell endothelial cell of hepatic sinusoid 
@@ -239,7 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Visualize QC metrics using a violin plot</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(new_seurat_object, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"nFeature_RNA"</span>, <span class="st">"nCount_RNA"</span>), <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VlnPlot</span>(new_seurat_object, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"nFeature_RNA"</span>, <span class="st">"nCount_RNA"</span>), <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: The `slot` argument of `FetchData()` is deprecated as of SeuratObject 5.0.0.
 ℹ Please use the `layer` argument instead.
@@ -273,7 +270,7 @@ Please use `theme()` to construct themes.</code></pre>
 </div>
 <p>Visualize cell populations using UMAP</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(new_seurat_object, <span class="at">reduction =</span> <span class="st">"umap"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(new_seurat_object, <span class="at">reduction =</span> <span class="st">"umap"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -285,20 +282,20 @@ Please use `theme()` to construct themes.</code></pre>
 </section>
 <section id="subset-cell-populations-of-interest-kupffer-cells-and-hepatocytes" class="level3">
 <h3 class="anchored" data-anchor-id="subset-cell-populations-of-interest-kupffer-cells-and-hepatocytes">3. Subset cell populations of interest (Kupffer cells and hepatocytes)</h3>
-<p>In this step, we retain only the Kupffer cell and hepatocyte populations for downstream analysis. This allows us to focus on the relevant cell types and reduce noise from other populations.</p>
+<p>In this step, we retain only the Kupffer cell and hepatocyte populations for downstream analysis. This allows us to focus on only these two types and reduce noise from other populations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>seurat_obj <span class="ot">&lt;-</span> <span class="fu">subset</span>(new_seurat_object,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">subset =</span> cell_ontology_class <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Kupffer cell"</span>, <span class="st">"hepatocyte"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>seurat_obj <span class="ot">&lt;-</span> <span class="fu">subset</span>(new_seurat_object,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">subset =</span> cell_ontology_class <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Kupffer cell"</span>, <span class="st">"hepatocyte"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removing 267 cells missing data for vars requested</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(<span class="at">object =</span> seurat_obj) <span class="ot">&lt;-</span> seurat_obj<span class="sc">@</span>meta.data<span class="sc">$</span>cell_ontology_class</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(<span class="at">object =</span> seurat_obj) <span class="ot">&lt;-</span> seurat_obj<span class="sc">@</span>meta.data<span class="sc">$</span>cell_ontology_class</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="verify-that-only-kupffer-cells-and-hepatocytes-are-retained" class="level3">
 <h3 class="anchored" data-anchor-id="verify-that-only-kupffer-cells-and-hepatocytes-are-retained">4. Verify that only Kupffer cells and hepatocytes are retained</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>seurat_obj<span class="sc">@</span>meta.data<span class="sc">$</span>cell_ontology_class <span class="sc">%&gt;%</span> <span class="fu">table</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>seurat_obj<span class="sc">@</span>meta.data<span class="sc">$</span>cell_ontology_class <span class="sc">%&gt;%</span> <span class="fu">table</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>.
   hepatocyte Kupffer cell 
@@ -308,22 +305,22 @@ Please use `theme()` to construct themes.</code></pre>
 </section>
 <section id="load-nichenet-networks-from-zenodo" class="level3">
 <h3 class="anchored" data-anchor-id="load-nichenet-networks-from-zenodo">5. Load NicheNet networks from Zenodo</h3>
-<p>EV-Net relies on NicheNet’s weighted networks, which contain prior knowledge about signaling and regulatory interactions. For this use case, we are loding the networks required for a mouse organism.</p>
+<p>EV-Net relies on NicheNet’s weighted networks, which contain prior knowledge about signaling and regulatory interactions. For this use case, we are loading the networks required for a mouse organism.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">600</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>organism <span class="ot">&lt;-</span> <span class="st">"mouse"</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(organism <span class="sc">==</span> <span class="st">"human"</span>){</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  lr_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/lr_network_human_21122021.rds"</span>))</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  weighted_networks <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds?download=1"</span>))</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(organism <span class="sc">==</span> <span class="st">"mouse"</span>){</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  lr_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds"</span>))</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  weighted_networks <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds?download=1"</span>))</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>lr_network <span class="ot">&lt;-</span> lr_network <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(from, to)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(lr_network)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">600</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>organism <span class="ot">&lt;-</span> <span class="st">"mouse"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(organism <span class="sc">==</span> <span class="st">"human"</span>){</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  lr_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/lr_network_human_21122021.rds"</span>))</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  weighted_networks <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final.rds?download=1"</span>))</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span>(organism <span class="sc">==</span> <span class="st">"mouse"</span>){</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  lr_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/lr_network_mouse_21122021.rds"</span>))</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  weighted_networks <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/7074291/files/weighted_networks_nsga2r_final_mouse.rds?download=1"</span>))</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>lr_network <span class="ot">&lt;-</span> lr_network <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(from, to)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(lr_network)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
   from          to   
@@ -339,126 +336,126 @@ Please use `theme()` to construct themes.</code></pre>
 </section>
 <section id="download-and-load-the-ev-net-ev_cargo_target_matrix" class="level3">
 <h3 class="anchored" data-anchor-id="download-and-load-the-ev-net-ev_cargo_target_matrix">6. Download and load the EV-Net EV_cargo_target_matrix</h3>
-<p>Download it from https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds and load it into your R environment.</p>
+<p><strong>Download it from https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds and load it into your R environment.</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_target_matrix <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"~/embo/Netiev/EV_cargo_target_matrix.rds"</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Replace file path with the path in which you stored the EV_cargo_target_matrix rds file</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_target_matrix <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"~/your_folder_name/EV_cargo_target_matrix.rds"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Replace file path with the path in which you stored the EV_cargo_target_matrix rds file</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="define-receiver-cell-populations-and-select-shared-features" class="level3">
-<h3 class="anchored" data-anchor-id="define-receiver-cell-populations-and-select-shared-features">7. Define receiver cell populations and select shared features</h3>
-<p>In this step we extract the cells for each population (Kupffer cells and hepatocytes), get their count matrices, and identify the genes expressed in at least one cell. The two lists of genes are then combined and duplicates removed, producing a unified set of features for downstream EV cargo analysis.</p>
+<section id="define-receiver-cell-populations-and-select-shared-genes" class="level3">
+<h3 class="anchored" data-anchor-id="define-receiver-cell-populations-and-select-shared-genes">7. Define receiver cell populations and select shared genes</h3>
+<p>In this step we extract the cells for each population (Kupffer cells and hepatocytes), get their count matrices, and identify the genes expressed in at least one cell. The two lists of genes are then combined and duplicates removed, producing a unified set of genes to be used for the EV-Net workflow.</p>
 <blockquote class="blockquote">
 <p><strong>Note:</strong> Add an identity class label (idents) for your cell populations</p>
 </blockquote>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Extract the cells belonging to each cell type</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>cells_type_1 <span class="ot">&lt;-</span> <span class="fu">WhichCells</span>(new_seurat_object, <span class="at">idents =</span> <span class="st">"Kupffer cell"</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>cells_type_2 <span class="ot">&lt;-</span> <span class="fu">WhichCells</span>(new_seurat_object, <span class="at">idents =</span> <span class="st">"hepatocyte"</span>)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Subset the Seurat object to get the count matrix for each cell type</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>data_matrix <span class="ot">&lt;-</span> <span class="fu">GetAssayData</span>(new_seurat_object, <span class="at">slot =</span> <span class="st">"counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Extract the cells belonging to each cell type</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cells_type_1 <span class="ot">&lt;-</span> <span class="fu">WhichCells</span>(new_seurat_object, <span class="at">idents =</span> <span class="st">"Kupffer cell"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>cells_type_2 <span class="ot">&lt;-</span> <span class="fu">WhichCells</span>(new_seurat_object, <span class="at">idents =</span> <span class="st">"hepatocyte"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Subset the Seurat object to get the count matrix for each cell type</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>data_matrix <span class="ot">&lt;-</span> <span class="fu">GetAssayData</span>(new_seurat_object, <span class="at">slot =</span> <span class="st">"counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
 ℹ Please use the `layer` argument instead.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the features (genes) expressed in each cell type</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Features expressed in at least one cell for cell_type_1 (Kupffer cells)</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>features_type_1 <span class="ot">&lt;-</span> <span class="fu">rownames</span>(data_matrix)[<span class="fu">rowSums</span>(data_matrix[, cells_type_1] <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Features expressed in at least one cell for cell_type_2 (hepatocyte)</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>features_type_2 <span class="ot">&lt;-</span> <span class="fu">rownames</span>(data_matrix)[<span class="fu">rowSums</span>(data_matrix[, cells_type_2] <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Combine the two lists of features and remove duplicates</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>combined_features <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(features_type_1, features_type_2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the features (genes) expressed in each cell type</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Features expressed in at least one cell for cell_type_1 (Kupffer cells)</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>features_type_1 <span class="ot">&lt;-</span> <span class="fu">rownames</span>(data_matrix)[<span class="fu">rowSums</span>(data_matrix[, cells_type_1] <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Features expressed in at least one cell for cell_type_2 (hepatocyte)</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>features_type_2 <span class="ot">&lt;-</span> <span class="fu">rownames</span>(data_matrix)[<span class="fu">rowSums</span>(data_matrix[, cells_type_2] <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Combine the two lists of features and remove duplicates</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>combined_features <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(features_type_1, features_type_2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, we define our receivers</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>receiver <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Kupffer cell"</span>, <span class="st">"hepatocyte"</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>expressed_genes_receiver <span class="ot">&lt;-</span> combined_features</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>receiver <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Kupffer cell"</span>, <span class="st">"hepatocyte"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>expressed_genes_receiver <span class="ot">&lt;-</span> combined_features</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="define-expressed-interactors-and-the-potential-ev-cargo" class="level3">
 <h3 class="anchored" data-anchor-id="define-expressed-interactors-and-the-potential-ev-cargo">8. Define expressed interactors and the potential EV cargo</h3>
 <p>In this step, we identify expressed interactors, which are all proteins expressed in the receiving cell populations, including receptors, downstream signaling proteins, and transcription factors, that could potentially interact with the potential EV cargo (actual EV cargo will be defined in a following step). These expressed interactors will be used to link EV cargo to target genes in downstream analyses.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>all_genes <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">rownames</span>(EV_cargo_target_matrix))  </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>expressed_interactors <span class="ot">&lt;-</span> <span class="fu">intersect</span>(all_genes, expressed_genes_receiver)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>lr_sig <span class="ot">&lt;-</span> weighted_networks[[<span class="st">"lr_sig"</span>]]</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>gr <span class="ot">&lt;-</span> weighted_networks[[<span class="st">"gr"</span>]]</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>potential_EV_cargo_prot <span class="ot">&lt;-</span> lr_sig[lr_sig<span class="sc">$</span>to <span class="sc">%in%</span> expressed_interactors, <span class="st">"from"</span>]</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>potential_EV_cargo_tf <span class="ot">&lt;-</span> gr[gr<span class="sc">$</span>to <span class="sc">%in%</span> expressed_interactors, <span class="st">"from"</span>]</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>potential_EV_cargo <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(potential_EV_cargo_prot<span class="sc">$</span>from, potential_EV_cargo_tf<span class="sc">$</span>from))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>all_genes <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">rownames</span>(EV_cargo_target_matrix))  </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>expressed_interactors <span class="ot">&lt;-</span> <span class="fu">intersect</span>(all_genes, expressed_genes_receiver)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>lr_sig <span class="ot">&lt;-</span> weighted_networks[[<span class="st">"lr_sig"</span>]]</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>gr <span class="ot">&lt;-</span> weighted_networks[[<span class="st">"gr"</span>]]</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>potential_EV_cargo_prot <span class="ot">&lt;-</span> lr_sig[lr_sig<span class="sc">$</span>to <span class="sc">%in%</span> expressed_interactors, <span class="st">"from"</span>]</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>potential_EV_cargo_tf <span class="ot">&lt;-</span> gr[gr<span class="sc">$</span>to <span class="sc">%in%</span> expressed_interactors, <span class="st">"from"</span>]</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>potential_EV_cargo <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(potential_EV_cargo_prot<span class="sc">$</span>from, potential_EV_cargo_tf<span class="sc">$</span>from))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="reduce-the-size-of-the-ev_cargo_target_matrix" class="level3">
 <h3 class="anchored" data-anchor-id="reduce-the-size-of-the-ev_cargo_target_matrix">9. Reduce the size of the EV_cargo_target_matrix</h3>
-<p>The EV_cargo_target_matrix is large (3.6 GB). If your system has limited RAM, it is recommended to filter the matrix to keep only the expressed genes in the receiver and the potential EV cargo, which significantly reduces its size. This step is optional for systems with 32 GB of RAM or more.</p>
+<p><strong>Optional.</strong> The EV_cargo_target_matrix is large (3.6 GB). If your system has limited RAM, it is recommended to filter the matrix to keep only the expressed genes in the receiver and the potential EV cargo, which significantly reduces its size. This step is optional for systems with 32 GB of RAM or more.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_target_matrix <span class="ot">&lt;-</span> EV_cargo_target_matrix[<span class="fu">rownames</span>(EV_cargo_target_matrix) <span class="sc">%in%</span> expressed_genes_receiver, <span class="fu">colnames</span>(EV_cargo_target_matrix) <span class="sc">%in%</span> potential_EV_cargo]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_target_matrix <span class="ot">&lt;-</span> EV_cargo_target_matrix[<span class="fu">rownames</span>(EV_cargo_target_matrix) <span class="sc">%in%</span> expressed_genes_receiver, <span class="fu">colnames</span>(EV_cargo_target_matrix) <span class="sc">%in%</span> potential_EV_cargo]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Release memory using the garbage collector</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            used   (Mb) gc trigger   (Mb)  max used   (Mb)
-Ncells   4156426  222.0    7264038  388.0   7264038  388.0
-Vcells 292554148 2232.1  888043454 6775.3 738376403 5633.4</code></pre>
+Ncells   4168209  222.7    7495227  400.3   7495227  400.3
+Vcells 292572406 2232.2  888065358 6775.5 738394657 5633.6</code></pre>
 </div>
 </div>
 </section>
 <section id="load-the-differentially-abundant-prediabetic-ev-cargo" class="level3">
 <h3 class="anchored" data-anchor-id="load-the-differentially-abundant-prediabetic-ev-cargo">10. Load the differentially abundant prediabetic EV cargo</h3>
-<p>We load the EV cargo differentially abundant in the prediabetic condition. This includes proteins with a p-value &lt; 0.1 and a log fold change &gt; 1, identified using an empirical Bayes t-test with limma comparing healthy and prediabetic conditions. These filtered prediabteic EV cargo will be used to assess their potential impact on the Kupffer cells.</p>
+<p>We selected EVs proteins after a differential abundance analysis by an empirical Bayes moderated t-test implemented in limma (Ritchie et al., 2015). Specifically, proteins with a p-value &lt; 0.1 and a log fold change &gt; 1 corresponding to the most abundant in the prediabetic condition. These filtered prediabeteic EV cargo will be used to assess their regulatory potential on the Kupffer cells.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>prediabetic_EV_cargo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/17041035/files/prediabetic_EV_cargo.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>prediabetic_EV_cargo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/record/17041035/files/prediabetic_EV_cargo.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="get-list-of-ev_cargo" class="level3">
 <h3 class="anchored" data-anchor-id="get-list-of-ev_cargo">11. Get list of EV_cargo</h3>
 <p>The final set of EV cargo is obtained by selecting proteins that are present in both the actual prediabetic EV cargo and the list of potential EV cargo (obtained in step 8). This ensures that we focus on proteins that are differentially abundant in the prediabetic condition and that may influence the expressed genes in the receiving tissue.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>EV_cargo <span class="ot">&lt;-</span> <span class="fu">intersect</span>(potential_EV_cargo, prediabetic_EV_cargo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>EV_cargo <span class="ot">&lt;-</span> <span class="fu">intersect</span>(potential_EV_cargo, prediabetic_EV_cargo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="define-the-gene-set-of-interest" class="level3">
 <h3 class="anchored" data-anchor-id="define-the-gene-set-of-interest">12. Define the gene set of interest</h3>
-<p>To define the gene set of interest, we use Seurat’s <code>FindMarkers()</code> function to assess differential expression between our cell populations. Genes with an average log2 fold change <code>(avg_log2FC) ≥ 0.25</code> are selected as upregulated in Kupffer cells.</p>
+<p>To define the gene set of interest, we use Seurat’s <code>FindMarkers()</code> function to assess differential expression between our cell populations. Genes with an average log2 fold change <code>(avg_log2FC) ≥ 0.25</code> and an <code>adjusted p-value &lt;= 0.05</code> are selected as upregulated in Kupffer cells.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>condition_oi <span class="ot">&lt;-</span>  <span class="st">"Kupffer cell"</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>condition_reference <span class="ot">&lt;-</span> <span class="st">"hepatocyte"</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>seurat_obj_receiver <span class="ot">&lt;-</span> <span class="fu">subset</span>(seurat_obj, <span class="at">idents =</span> receiver)</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>DE_table_receiver <span class="ot">&lt;-</span>  <span class="fu">FindMarkers</span>(<span class="at">object =</span> seurat_obj,</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">ident.1 =</span> condition_oi, <span class="at">ident.2 =</span> condition_reference,</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">group.by =</span> <span class="st">"cell_ontology_class"</span>,</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">min.pct =</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(<span class="st">"gene"</span>)</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>geneset_oi <span class="ot">&lt;-</span> DE_table_receiver <span class="sc">%&gt;%</span> <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;=</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> avg_log2FC <span class="sc">&gt;=</span> <span class="fl">0.25</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(gene)</span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>geneset_oi <span class="ot">&lt;-</span> geneset_oi <span class="sc">%&gt;%</span> .[. <span class="sc">%in%</span> <span class="fu">rownames</span>(EV_cargo_target_matrix)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>condition_oi <span class="ot">&lt;-</span>  <span class="st">"Kupffer cell"</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>condition_reference <span class="ot">&lt;-</span> <span class="st">"hepatocyte"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>seurat_obj_receiver <span class="ot">&lt;-</span> <span class="fu">subset</span>(seurat_obj, <span class="at">idents =</span> receiver)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>DE_table_receiver <span class="ot">&lt;-</span>  <span class="fu">FindMarkers</span>(<span class="at">object =</span> seurat_obj,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">ident.1 =</span> condition_oi, <span class="at">ident.2 =</span> condition_reference,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">group.by =</span> <span class="st">"cell_ontology_class"</span>,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">min.pct =</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(<span class="st">"gene"</span>)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>geneset_oi <span class="ot">&lt;-</span> DE_table_receiver <span class="sc">%&gt;%</span> <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;=</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> avg_log2FC <span class="sc">&gt;=</span> <span class="fl">0.25</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(gene)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>geneset_oi <span class="ot">&lt;-</span> geneset_oi <span class="sc">%&gt;%</span> .[. <span class="sc">%in%</span> <span class="fu">rownames</span>(EV_cargo_target_matrix)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="defining-background-genes" class="level3">
 <h3 class="anchored" data-anchor-id="defining-background-genes">13. Defining background genes</h3>
 <p>Background genes are all genes expressed in the receiving cell populations. They provide a reference set for statistical analyses and enrichment calculations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>background_expressed_genes <span class="ot">&lt;-</span> expressed_genes_receiver <span class="sc">%&gt;%</span> .[. <span class="sc">%in%</span> <span class="fu">rownames</span>(EV_cargo_target_matrix)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>background_expressed_genes <span class="ot">&lt;-</span> expressed_genes_receiver <span class="sc">%&gt;%</span> .[. <span class="sc">%in%</span> <span class="fu">rownames</span>(EV_cargo_target_matrix)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="perform-ev-cargo-activity-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="perform-ev-cargo-activity-analysis">14. Perform EV cargo activity analysis</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_activities <span class="ot">&lt;-</span> <span class="fu">predict_EV_cargo_activities</span>(<span class="at">geneset =</span> geneset_oi,</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">background_expressed_genes =</span> background_expressed_genes,</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">EV_cargo_target_matrix =</span> EV_cargo_target_matrix,</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">potential_EV_cargo =</span> EV_cargo)</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>EV_cargo_activities <span class="ot">&lt;-</span> EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">rank</span>(<span class="fu">desc</span>(aupr_corrected)))</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>EV_cargo_activities</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_activities <span class="ot">&lt;-</span> <span class="fu">predict_EV_cargo_activities</span>(<span class="at">geneset =</span> geneset_oi,</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">background_expressed_genes =</span> background_expressed_genes,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">EV_cargo_target_matrix =</span> EV_cargo_target_matrix,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">potential_EV_cargo =</span> EV_cargo)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>EV_cargo_activities <span class="ot">&lt;-</span> EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">rank</span>(<span class="fu">desc</span>(aupr_corrected)))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>EV_cargo_activities</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 275 × 6
    test_EV_cargo auroc  aupr aupr_corrected pearson  rank
@@ -480,17 +477,17 @@ Vcells 292554148 2232.1  888043454 6775.3 738376403 5633.4</code></pre>
 <section id="visualization-of-top-ranked-ev-cargo" class="level3">
 <h3 class="anchored" data-anchor-id="visualization-of-top-ranked-ev-cargo">15. Visualization of top-ranked EV cargo</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>p_hist_EV_cargo_activity <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(EV_cargo_activities, <span class="fu">aes</span>(<span class="at">x=</span>aupr_corrected)) <span class="sc">+</span> </span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"darkorange"</span>)  <span class="sc">+</span> </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept=</span><span class="fu">min</span>(EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="dv">10</span>, aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(aupr_corrected))),</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span><span class="st">"red"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"EV cargo activity (PCC)"</span>, <span class="at">y =</span> <span class="st">"# EV cargo"</span>) <span class="sc">+</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>p_hist_EV_cargo_activity <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(EV_cargo_activities, <span class="fu">aes</span>(<span class="at">x=</span>aupr_corrected)) <span class="sc">+</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"darkorange"</span>)  <span class="sc">+</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept=</span><span class="fu">min</span>(EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="dv">10</span>, aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(aupr_corrected))),</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span><span class="st">"red"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"EV cargo activity (PCC)"</span>, <span class="at">y =</span> <span class="st">"# EV cargo"</span>) <span class="sc">+</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ℹ Please use `linewidth` instead.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>p_hist_EV_cargo_activity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>p_hist_EV_cargo_activity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -506,15 +503,15 @@ Vcells 292554148 2232.1  888043454 6775.3 738376403 5633.4</code></pre>
 <p><strong>Note:</strong> We have selected the top 30 <code>best_upstream_EV_cargo</code> but this number can be changed.</p>
 </blockquote>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>best_upstream_EV_cargo <span class="ot">&lt;-</span> EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="dv">30</span>, aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(test_EV_cargo)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>vis_EV_cargo_aupr <span class="ot">&lt;-</span> EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">filter</span>(test_EV_cargo <span class="sc">%in%</span> best_upstream_EV_cargo) <span class="sc">%&gt;%</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">"test_EV_cargo"</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>(<span class="at">ncol =</span> <span class="dv">1</span>)</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>(<span class="fu">make_heatmap_ggplot</span>(vis_EV_cargo_aupr,</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Prioritized EV cargo"</span>, <span class="st">"EV cargo activity"</span>, </span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">legend_title =</span> <span class="st">"AUPR"</span>, <span class="at">color =</span> <span class="st">"darkorange"</span>) <span class="sc">+</span> </span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x.top =</span> <span class="fu">element_blank</span>()))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>best_upstream_EV_cargo <span class="ot">&lt;-</span> EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="dv">30</span>, aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(test_EV_cargo)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>vis_EV_cargo_aupr <span class="ot">&lt;-</span> EV_cargo_activities <span class="sc">%&gt;%</span> <span class="fu">filter</span>(test_EV_cargo <span class="sc">%in%</span> best_upstream_EV_cargo) <span class="sc">%&gt;%</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">"test_EV_cargo"</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(aupr_corrected) <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>(<span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>(<span class="fu">make_heatmap_ggplot</span>(vis_EV_cargo_aupr,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Prioritized EV cargo"</span>, <span class="st">"EV cargo activity"</span>, </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">legend_title =</span> <span class="st">"AUPR"</span>, <span class="at">color =</span> <span class="st">"darkorange"</span>) <span class="sc">+</span> </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x.top =</span> <span class="fu">element_blank</span>()))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
 ℹ Please use the `linewidth` argument instead.</code></pre>
@@ -528,34 +525,34 @@ Vcells 292554148 2232.1  888043454 6775.3 738376403 5633.4</code></pre>
 </div>
 </div>
 </section>
-<section id="infer-target-genes-of-top-ranked-ev-cargo" class="level3">
-<h3 class="anchored" data-anchor-id="infer-target-genes-of-top-ranked-ev-cargo">17. Infer target genes of top-ranked EV cargo</h3>
+<section id="infer-kupffer-cells-target-genes-of-top-ranked-ev-cargo" class="level3">
+<h3 class="anchored" data-anchor-id="infer-kupffer-cells-target-genes-of-top-ranked-ev-cargo">17. Infer Kupffer cell’s target genes of top-ranked EV cargo</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>active_EV_cargo_target_links_df <span class="ot">&lt;-</span> best_upstream_EV_cargo <span class="sc">%&gt;%</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(get_weighted_EV_cargo_target_links,</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">geneset =</span> geneset_oi,</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">EV_cargo_target_matrix =</span> EV_cargo_target_matrix,</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">80</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>active_EV_cargo_target_links_df <span class="ot">&lt;-</span> best_upstream_EV_cargo <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(get_weighted_EV_cargo_target_links,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">geneset =</span> geneset_oi,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">EV_cargo_target_matrix =</span> EV_cargo_target_matrix,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">80</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>active_EV_cargo_target_links <span class="ot">&lt;-</span> <span class="fu">prepare_EV_cargo_target_visualization</span>(</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">EV_cargo_target_df =</span> active_EV_cargo_target_links_df,</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">EV_cargo_target_matrix =</span> EV_cargo_target_matrix,</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="fl">0.5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>active_EV_cargo_target_links <span class="ot">&lt;-</span> <span class="fu">prepare_EV_cargo_target_visualization</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">EV_cargo_target_df =</span> active_EV_cargo_target_links_df,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">EV_cargo_target_matrix =</span> EV_cargo_target_matrix,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="fl">0.5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>order_EV_cargo <span class="ot">&lt;-</span> <span class="fu">intersect</span>(best_upstream_EV_cargo, <span class="fu">colnames</span>(active_EV_cargo_target_links)) <span class="sc">%&gt;%</span> <span class="fu">rev</span>()</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>order_targets <span class="ot">&lt;-</span> active_EV_cargo_target_links_df<span class="sc">$</span>target <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">intersect</span>(<span class="fu">rownames</span>(active_EV_cargo_target_links))</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>vis_EV_cargo_target <span class="ot">&lt;-</span> <span class="fu">t</span>(active_EV_cargo_target_links[order_targets,order_EV_cargo])</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>target_genes_heatmap <span class="ot">&lt;-</span> <span class="fu">make_heatmap_ggplot</span>(vis_EV_cargo_target, <span class="st">"Prioritized EV cargo"</span>, <span class="st">"Predicted target genes"</span>,</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> <span class="st">"purple"</span>, <span class="at">legend_title =</span> <span class="st">"Regulatory potential"</span>) <span class="sc">+</span></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"whitesmoke"</span>,  <span class="at">high =</span> <span class="st">"purple"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>order_EV_cargo <span class="ot">&lt;-</span> <span class="fu">intersect</span>(best_upstream_EV_cargo, <span class="fu">colnames</span>(active_EV_cargo_target_links)) <span class="sc">%&gt;%</span> <span class="fu">rev</span>()</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>order_targets <span class="ot">&lt;-</span> active_EV_cargo_target_links_df<span class="sc">$</span>target <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">intersect</span>(<span class="fu">rownames</span>(active_EV_cargo_target_links))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>vis_EV_cargo_target <span class="ot">&lt;-</span> <span class="fu">t</span>(active_EV_cargo_target_links[order_targets,order_EV_cargo])</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>target_genes_heatmap <span class="ot">&lt;-</span> <span class="fu">make_heatmap_ggplot</span>(vis_EV_cargo_target, <span class="st">"Prioritized EV cargo"</span>, <span class="st">"Predicted target genes"</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> <span class="st">"purple"</span>, <span class="at">legend_title =</span> <span class="st">"Regulatory potential"</span>) <span class="sc">+</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"whitesmoke"</span>,  <span class="at">high =</span> <span class="st">"purple"</span>, <span class="at">breaks =</span> <span class="fu">range</span>(vis_EV_cargo_target, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_number</span>(<span class="at">accuracy =</span> <span class="fl">0.001</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>target_genes_heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>target_genes_heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -566,49 +563,49 @@ Vcells 292554148 2232.1  888043454 6775.3 738376403 5633.4</code></pre>
 </div>
 <p>Save plot (optional)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"target_genes_heatmap_prediabetic_EV_cargo_target_matrix_newHyper.png"</span>, <span class="at">res =</span> <span class="dv">300</span>, <span class="at">width =</span> <span class="dv">5000</span>, <span class="at">height =</span> <span class="dv">2000</span>)</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(target_genes_heatmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"target_genes_heatmap_prediabetic_EV_cargo_target_matrix_newHyper.png"</span>, <span class="at">res =</span> <span class="dv">300</span>, <span class="at">width =</span> <span class="dv">5600</span>, <span class="at">height =</span> <span class="dv">2000</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(target_genes_heatmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="build-an-interaction-network" class="level3">
 <h3 class="anchored" data-anchor-id="build-an-interaction-network">18. Build an interaction network</h3>
-<p>Next, we build an interaction network for one of the top-ranked EV cargo, the Scly protein, and two of its biologically relevant target genes for prediabetes: Zeb2 and Foxo1. These targets were selected after examining the <code>target_genes_heatmap</code> to prioritize genes with potential functional significance.</p>
+<p>Next, we build an interaction network for one of the top-ranked EV cargo, the Scly protein, and two of its biologically relevant target genes for prediabetes: Zeb2 and Foxo1. These targets were selected after examining the <code>target_genes_heatmap</code> and performing a small literature search, to prioritize genes with potential functional significance.</p>
 <p>Load Nichenet’s sig_network and gr_network from zenodo</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>sig_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/records/7074291/files/signaling_network_mouse_21122021.rds"</span>))</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>gr_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/records/7074291/files/gr_network_mouse_21122021.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>sig_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/records/7074291/files/signaling_network_mouse_21122021.rds"</span>))</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>gr_network <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">url</span>(<span class="st">"https://zenodo.org/records/7074291/files/gr_network_mouse_21122021.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Infer EV_cargo-to-target signaling paths</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_oi <span class="ot">&lt;-</span> <span class="st">"Scly"</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>targets_oi <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Zeb2"</span>, <span class="st">"Foxo1"</span>)</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>active_signaling_network <span class="ot">&lt;-</span> <span class="fu">get_EV_cargo_signaling_path</span>(<span class="at">EV_cargo_all =</span> EV_cargo_oi,</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">targets_all =</span> targets_oi, </span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">weighted_networks =</span> weighted_networks,</span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">EV_cargo_tf_matrix =</span> EV_cargo_target_matrix,</span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">top_n_regulators =</span> <span class="dv">4</span>,</span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">minmax_scaling =</span> <span class="cn">TRUE</span>) </span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>graph_min_max <span class="ot">&lt;-</span> <span class="fu">diagrammer_format_signaling_graph</span>(<span class="at">signaling_graph_list =</span> active_signaling_network,</span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>                                                   <span class="at">EV_cargo_all =</span> EV_cargo_oi, <span class="at">targets_all =</span> targets_oi,</span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>                                                   <span class="at">sig_color =</span> <span class="st">"indianred"</span>, <span class="at">gr_color =</span> <span class="st">"steelblue"</span>)</span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>DiagrammeR<span class="sc">::</span><span class="fu">render_graph</span>(graph_min_max, <span class="at">layout =</span> <span class="st">"tree"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>EV_cargo_oi <span class="ot">&lt;-</span> <span class="st">"Scly"</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>targets_oi <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Zeb2"</span>, <span class="st">"Foxo1"</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>active_signaling_network <span class="ot">&lt;-</span> <span class="fu">get_EV_cargo_signaling_path</span>(<span class="at">EV_cargo_all =</span> EV_cargo_oi,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">targets_all =</span> targets_oi, </span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">weighted_networks =</span> weighted_networks,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">EV_cargo_tf_matrix =</span> EV_cargo_target_matrix,</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">top_n_regulators =</span> <span class="dv">4</span>,</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">minmax_scaling =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>graph_min_max <span class="ot">&lt;-</span> <span class="fu">diagrammer_format_signaling_graph</span>(<span class="at">signaling_graph_list =</span> active_signaling_network,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>                                                   <span class="at">EV_cargo_all =</span> EV_cargo_oi, <span class="at">targets_all =</span> targets_oi,</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>                                                   <span class="at">sig_color =</span> <span class="st">"indianred"</span>, <span class="at">gr_color =</span> <span class="st">"steelblue"</span>)</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>DiagrammeR<span class="sc">::</span><span class="fu">render_graph</span>(graph_min_max, <span class="at">layout =</span> <span class="st">"tree"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="grViz html-widget html-fill-item" id="htmlwidget-a4082e97c151511ea023" style="width:100%;height:464px;"></div>
 <script type="application/json" data-for="htmlwidget-a4082e97c151511ea023">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Akt1\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"16.5,8!\"] \n  \"2\" [label = \"C1d\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"7.5,4!\"] \n  \"3\" [label = \"Cebpb\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"7.5,8!\"] \n  \"4\" [label = \"Cebpg\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"2.5,6!\"] \n  \"5\" [label = \"Creb3\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"25,7!\"] \n  \"6\" [label = \"Crebbp\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"27.5,3!\"] \n  \"7\" [label = \"Fli1\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"33,8!\"] \n  \"8\" [label = \"Foxo1\", style = \"filled\", width = \"0.75\", fillcolor = \"#4682B4\", fontcolor = \"white\", pos = \"18,2!\"] \n  \"9\" [label = \"Foxo3\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"12,7!\"] \n  \"10\" [label = \"Gata1\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"34.5,7!\"] \n  \"11\" [label = \"Gata4\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"28,2!\"] \n  \"12\" [label = \"Ikzf1\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"27.5,6!\"] \n  \"13\" [label = \"Nme7\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"37,5!\"] \n  \"14\" [label = \"Prkdc\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"9,5!\"] \n  \"15\" [label = \"Scly\", style = \"filled\", width = \"0.75\", fillcolor = \"#CD5C5C\", fontcolor = \"white\", pos = \"26.5,8!\"] \n  \"16\" [label = \"Srf\", style = \"filled\", width = \"0.75\", fillcolor = \"#7F7F7F\", fontcolor = \"white\", pos = \"23.5,4!\"] \n  \"17\" [label = \"Zeb2\", style = \"filled\", width = \"0.75\", fillcolor = \"#4682B4\", fontcolor = \"white\", pos = \"16.5,1!\"] \n\"1\"->\"6\" [penwidth = \"1.24153189555703\", color = \"indianred\"] \n\"1\"->\"8\" [penwidth = \"1.64577625581187\", color = \"indianred\"] \n\"1\"->\"9\" [penwidth = \"1.75\", color = \"indianred\"] \n\"1\"->\"10\" [penwidth = \"1.43450860645643\", color = \"indianred\"] \n\"1\"->\"14\" [penwidth = \"1.06986416159998\", color = \"indianred\"] \n\"1\"->\"16\" [penwidth = \"0.808187770595538\", color = \"indianred\"] \n\"2\"->\"14\" [penwidth = \"1.00716623626383\", color = \"indianred\"] \n\"3\"->\"4\" [penwidth = \"1.11950891087189\", color = \"indianred\"] \n\"3\"->\"6\" [penwidth = \"1.02656218177884\", color = \"indianred\"] \n\"3\"->\"8\" [penwidth = \"1.13296709389966\", color = \"indianred\"] \n\"3\"->\"9\" [penwidth = \"0.808580650474916\", color = \"indianred\"] \n\"3\"->\"14\" [penwidth = \"0.789660626848811\", color = \"indianred\"] \n\"3\"->\"16\" [penwidth = \"1.05165757952378\", color = \"indianred\"] \n\"4\"->\"3\" [penwidth = \"1.08419081336899\", color = \"indianred\"] \n\"5\"->\"4\" [penwidth = \"0.940671386982968\", color = \"indianred\"] \n\"5\"->\"6\" [penwidth = \"0.911994520852963\", color = \"indianred\"] \n\"5\"->\"16\" [penwidth = \"0.808187770595538\", color = \"indianred\"] \n\"6\"->\"8\" [penwidth = \"1.31940731224756\", color = \"indianred\"] \n\"6\"->\"9\" [penwidth = \"0.935553508544489\", color = \"indianred\"] \n\"6\"->\"10\" [penwidth = \"1.22793108502102\", color = \"indianred\"] \n\"6\"->\"11\" [penwidth = \"0.75689461884781\", color = \"indianred\"] \n\"6\"->\"16\" [penwidth = \"1.11483587367221\", color = \"indianred\"] \n\"7\"->\"10\" [penwidth = \"1.18921394904298\", color = \"indianred\"] \n\"7\"->\"16\" [penwidth = \"0.962001207092974\", color = \"indianred\"] \n\"8\"->\"3\" [penwidth = \"0.99635132680163\", color = \"indianred\"] \n\"8\"->\"6\" [penwidth = \"1.03166845360801\", color = \"indianred\"] \n\"8\"->\"16\" [penwidth = \"0.808187770595538\", color = \"indianred\"] \n\"9\"->\"3\" [penwidth = \"0.80645191759171\", color = \"indianred\"] \n\"9\"->\"6\" [penwidth = \"0.914387714453439\", color = \"indianred\"] \n\"9\"->\"8\" [penwidth = \"0.934354618674737\", color = \"indianred\"] \n\"9\"->\"14\" [penwidth = \"0.756825682710601\", color = \"indianred\"] \n\"10\"->\"6\" [penwidth = \"0.947679232294284\", color = \"indianred\"] \n\"10\"->\"7\" [penwidth = \"1.09850941393042\", color = \"indianred\"] \n\"10\"->\"12\" [penwidth = \"1.0259524140295\", color = \"indianred\"] \n\"11\"->\"6\" [penwidth = \"0.75\", color = \"indianred\"] \n\"12\"->\"13\" [penwidth = \"0.957388770458399\", color = \"indianred\"] \n\"12\"->\"14\" [penwidth = \"0.756825682710601\", color = \"indianred\"] \n\"13\"->\"12\" [penwidth = \"0.986383274041112\", color = \"indianred\"] \n\"14\"->\"1\" [penwidth = \"1.311732740574\", color = \"indianred\"] \n\"14\"->\"2\" [penwidth = \"1.19149856328592\", color = \"indianred\"] \n\"14\"->\"3\" [penwidth = \"0.799367640280817\", color = \"indianred\"] \n\"14\"->\"9\" [penwidth = \"0.763318319193589\", color = \"indianred\"] \n\"14\"->\"12\" [penwidth = \"0.764636394529604\", color = \"indianred\"] \n\"14\"->\"16\" [penwidth = \"1.42548422397775\", color = \"indianred\"] \n\"15\"->\"2\" [penwidth = \"0.893681374825888\", color = \"indianred\"] \n\"15\"->\"5\" [penwidth = \"0.923121289592165\", color = \"indianred\"] \n\"15\"->\"10\" [penwidth = \"0.80936427439744\", color = \"indianred\"] \n\"15\"->\"13\" [penwidth = \"0.815155747045271\", color = \"indianred\"] \n\"16\"->\"1\" [penwidth = \"0.793217684444974\", color = \"indianred\"] \n\"16\"->\"5\" [penwidth = \"0.810591820417987\", color = \"indianred\"] \n\"16\"->\"6\" [penwidth = \"1.07192853260038\", color = \"indianred\"] \n\"16\"->\"7\" [penwidth = \"0.991652245885365\", color = \"indianred\"] \n\"16\"->\"8\" [penwidth = \"0.80830501006303\", color = \"indianred\"] \n\"16\"->\"11\" [penwidth = \"1.31319820878617\", color = \"indianred\"] \n\"3\"->\"8\" [penwidth = \"0.979034030760788\", color = \"steelblue\"] \n\"3\"->\"17\" [penwidth = \"1.33548601337174\", color = \"steelblue\"] \n\"7\"->\"8\" [penwidth = \"1.52619435599858\", color = \"steelblue\"] \n\"7\"->\"17\" [penwidth = \"0.75\", color = \"steelblue\"] \n\"8\"->\"8\" [penwidth = \"1.52619418049996\", color = \"steelblue\"] \n\"8\"->\"17\" [penwidth = \"1.57281701078889\", color = \"steelblue\"] \n\"9\"->\"8\" [penwidth = \"1.75\", color = \"steelblue\"] \n\"9\"->\"17\" [penwidth = \"1.57281701078889\", color = \"steelblue\"] \n\"11\"->\"17\" [penwidth = \"1.43090914008439\", color = \"steelblue\"] \n\"12\"->\"8\" [penwidth = \"1.20829714264035\", color = \"steelblue\"] \n\"12\"->\"17\" [penwidth = \"0.903951381965895\", color = \"steelblue\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To export/draw the svg, you need to install DiagrammeRsvg</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co">#graph_svg &lt;- DiagrammeRsvg::export_svg(DiagrammeR::render_graph(graph_min_max, layout = "tree", output = "graph"))</span></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co">#cowplot::ggdraw() + cowplot::draw_image(charToRaw(graph_svg))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To export/draw the svg, you need to install DiagrammeRsvg</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co">#graph_svg &lt;- DiagrammeRsvg::export_svg(DiagrammeR::render_graph(graph_min_max, layout = "tree", output = "graph"))</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co">#cowplot::ggdraw() + cowplot::draw_image(charToRaw(graph_svg))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Optional: Create a dataframe with annotations of collected data sources supporting the interactions in this network.</p>
+<p><strong>Optional:</strong> Create a dataframe with annotations of collected data sources supporting the interactions in this network.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>data_source_network <span class="ot">&lt;-</span> <span class="fu">infer_supporting_datasources</span>(<span class="at">signaling_graph_list =</span> active_signaling_network,</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">lr_network =</span> lr_network, <span class="at">sig_network =</span> sig_network, <span class="at">gr_network =</span> gr_network)</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_source_network) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>data_source_network <span class="ot">&lt;-</span> <span class="fu">infer_supporting_datasources</span>(<span class="at">signaling_graph_list =</span> active_signaling_network,</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">lr_network =</span> lr_network, <span class="at">sig_network =</span> sig_network, <span class="at">gr_network =</span> gr_network)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_source_network) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
   from  to    source                   database       layer     

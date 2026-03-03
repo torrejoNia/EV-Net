@@ -15,11 +15,12 @@ lapply(r_files, source)
 knitr::opts_chunk$set(echo = TRUE, fig.path='figures/', message=FALSE)
 ```
 
-This use case explores the effects of EV cargo derived from LPS-treated microglia on healthy microglia.
+This use case explores the the effect of EVs released by lipopolysaccharide (LPS)-activated microglia on unstimulated (naïve) microglia. LPS induces a pro-inflammatory phenotype in microglia, the brain’s resident immune cells, which play a central role in mediating neuroinflammatory responses across various neurological disorders (Santiago et al., 2023).
 
 ### 0. Load required packages
 ```{r 0}
 
+library(EVNet)
 library(Seurat)
 library(SeuratObject)
 library(tidyverse)
@@ -28,13 +29,15 @@ library(here)
 ```
 
 ### 1. Load microglia EVs proteomics file
-The dataset used in this vignette originates from Santiago et al. (2023), “Identification of State-Specific Proteomic and Transcriptomic Signatures of Microglia-Derived Extracellular Vesicles.” It comprises EVs proteomics data from LPS-stimulated microglia and RNA-seq data from recipient (healthy) microglia exposed to these EVs.
+The dataset used in this vignette originates from Santiago et al. (2023), “Identification of State-Specific Proteomic and Transcriptomic Signatures of Microglia-Derived Extracellular Vesicles.” It comprises proteomics data from EVs derived from LPS-activated microglia and RNA-seq data from recipient unstimulated (naïve) microglia exposed to these EVs.
 
 ```{r 1}
 LPS_microglia_EVs <- read.csv(url("https://zenodo.org/records/17391831/files/LPS_microglia_EVs.csv?download=1"), stringsAsFactors = FALSE)
 ```
 
 ### 2. Extracting the LPS_EV_cargo (more abundant in LPS treated microglia)
+
+Santiago and colleagues performed a differential abundance analysis using unpaired t-tests to compare EVs proteomics data from control microglia vs. LPS-activated microglia and other experimental conditions. Proteins that were more abundant in EVs from LPS-activated microglia and showed p-values < 0.1 were selected as the LPS_EV_cargo for our analysis.
 
 ```{r 2}
 LPS_EV_cargo <- LPS_microglia_EVs %>%
@@ -44,17 +47,21 @@ LPS_EV_cargo <- LPS_microglia_EVs %>%
 
 ### 3. Importing receiving microglia expression dataset
 
+As input data for the recipient tissue, we utilized transcriptomics data from naïve microglia exposed to LPS-activated microglia-derived EVs provided in the same study by Santiago et al., 2023.
+
 ```{r 3}
 receiving_microglia_expression <- readRDS(url("https://zenodo.org/records/17581185/files/receiving_microglia_expression.rds?download=1"))
 ```
 
-### 4. Defining expressed genes in receiver microglia
+### 4. Defining expressed genes in receiving microglia
 
 ```{r 4}
 expressed_genes_receiver <- receiving_microglia_expression$UniProt
 ```
 
 ### 5. Loading Nichenet networks from Zenodo
+
+EV-Net relies on NicheNet’s weighted networks, which contain prior knowledge about signaling and regulatory interactions. For this use case, we are loading the networks required for a mouse organism.
 
 ```{r 5}
 options(timeout = 600)
@@ -75,10 +82,10 @@ head(lr_network)
 
 ### 6. Download and load the EV-Net EV_cargo_target_matrix 
 
-Download it from https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds and load it into your R environment.
+**Download it from https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds and load it into your R environment.**
 
 ```{r 6}
-EV_cargo_target_matrix <- readRDS("~/embo/Netiev/EV_cargo_target_matrix.rds")
+EV_cargo_target_matrix <- readRDS("~/your_folder_name/EV_cargo_target_matrix.rds")
 #Replace file path with the path in which you stored the EV_cargo_target_matrix rds file
 ```
 
@@ -100,7 +107,7 @@ potential_EV_cargo <- unique(c(potential_EV_cargo_prot$from, potential_EV_cargo_
 
 ### 8. Reduce the size of the EV_cargo_target_matrix
 
-The EV_cargo_target_matrix is large (3.6 GB). If your system has limited RAM, it is recommended to filter the matrix to keep only the expressed genes in the receiver and the potential EV cargo, which significantly reduces its size. This step is optional for systems with 32 GB of RAM or more.
+**Optional.** The EV_cargo_target_matrix is large (3.6 GB). If your system has limited RAM, it is recommended to filter the matrix to keep only the expressed genes in the receiver and the potential EV cargo, which significantly reduces its size. This step is optional for systems with 32 GB of RAM or more.
 
 ```{r 8}
 EV_cargo_target_matrix <- EV_cargo_target_matrix[rownames(EV_cargo_target_matrix) %in% expressed_genes_receiver, colnames(EV_cargo_target_matrix) %in% potential_EV_cargo]
@@ -115,7 +122,7 @@ gc()
 
 ### 9. Define the gene set of interest
 
-To define the gene set of interest, we select the genes with an adjust pvalue `padj < 0.1 ` and an average log2 fold change `(avg_log2FC) ≥ 0.25`.
+To define the gene set of interest, we focused on naïve microglia genes that were differentially expressed in the condition treated with LPS-activated microglia-derived EVs, based on an adjusted p-value < 0.1 `padj < 0.1 ` and an absolute log fold change >= 0.25 `(avg_log2FC) ≥ 0.25`.
 
 ```{r 9}
 geneset_oi <- receiving_microglia_expression %>%
@@ -129,7 +136,7 @@ geneset_oi <- geneset_oi %>% .[. %in% rownames(EV_cargo_target_matrix)]
 
 ### 10. Defining background genes
 
-Background genes are all genes expressed in the receiving cell populations. They provide a reference set for statistical analyses and enrichment calculations.
+Background genes are all genes expressed in the recipient (naïve microglia). They provide a reference set for statistical analyses and enrichment calculations.
 
 ```{r 10}
 background_expressed_genes <- expressed_genes_receiver %>% .[. %in% rownames(EV_cargo_target_matrix)]
@@ -137,7 +144,7 @@ background_expressed_genes <- expressed_genes_receiver %>% .[. %in% rownames(EV_
 
 ### 11. Get list of EV_cargo
 
-The final set of EV cargo is obtained by selecting proteins that are present in both the actual LPS-derived microglia EV cargo and the list of potential EV cargo (obtained in step 7). This ensures that we focus on proteins that are differentially abundant in the LPS-activated condition and that may influence the expressed genes in the receiving microglia.
+The final set of EV cargo is obtained by selecting proteins that are present in both the actual LPS-activated microglia EV cargo and the list of potential EV cargo (obtained in step 7). This ensures that we focus on proteins that are differentially abundant in the LPS-activated condition and that may influence the expressed genes in the naïve receiving microglia.
 
 ```{r 11}
 EV_cargo <- intersect(potential_EV_cargo, LPS_EV_cargo)
@@ -152,6 +159,7 @@ EV_cargo_activities <- predict_EV_cargo_activities(geneset = geneset_oi,
                                                potential_EV_cargo = EV_cargo)
 
 EV_cargo_activities <- EV_cargo_activities %>% arrange(-aupr_corrected) %>% mutate(rank = rank(desc(aupr_corrected)))
+
 EV_cargo_activities
 
 ```
@@ -182,7 +190,7 @@ vis_EV_cargo_aupr <- EV_cargo_activities %>% filter(test_EV_cargo %in% best_upst
     theme(axis.text.x.top = element_blank()))  
 ```
 
-### 15. Infer target genes  of top-ranked EV cargo
+### 15. Infer target genes of top-ranked EV cargo
 
 ```{r 15}
 active_EV_cargo_target_links_df <- best_upstream_EV_cargo %>%
@@ -208,7 +216,7 @@ vis_EV_cargo_target <- t(active_EV_cargo_target_links[order_targets,order_EV_car
 
 target_genes_heatmap <- make_heatmap_ggplot(vis_EV_cargo_target, "Prioritized EV cargo", "Predicted target genes",
                     color = "purple", legend_title = "Regulatory potential") +
-  scale_fill_gradient2(low = "whitesmoke",  high = "purple")
+  scale_fill_gradient2(low = "whitesmoke",  high = "purple", breaks = range(vis_EV_cargo_target, na.rm = TRUE), labels = scales::label_number(accuracy = 0.001))
 ```
 
 ```{r 15.7}
@@ -216,13 +224,13 @@ target_genes_heatmap
 ```
 ### 16. Save plot (optional)
 ```{r 16}
-png("target_genes_heatmap_microglia_EV_cargo_RNAseq.png", res = 300, width = 5000, height = 2000)
+png("target_genes_heatmap_microglia_EV_cargo_RNAseq.png", res = 300, width = 2000, height = 2000)
 print(target_genes_heatmap)
 ```
 
 ### 17. Build an interaction network
 
-Next we will build an interaction network between one of the top-ranked EV cargo: the Mtdh protein, and two of its targets, with biological relevance for inflammation: Ddr1 and Slc7a11 (choice was made after studying the target_genes_heatmap). 
+Next we will build an interaction network between one of the top-ranked EV cargo: the Mtdh protein, and two of its targets with biological relevance for inflammation: Ddr1 and Slc7a11 (choice was made after studying the target_genes_heatmap and performing a small literature search). 
 
 Loading Nichenet's sig_network and gr_network from zenodo
 
@@ -256,7 +264,7 @@ DiagrammeR::render_graph(graph_min_max, layout = "tree")
 #cowplot::ggdraw() + cowplot::draw_image(charToRaw(graph_svg))
 ```
 
-Optional: Create a dataframe with annotations of collected data sources supporting the interactions in this network.
+**Optional:** Create a dataframe with annotations of collected data sources supporting the interactions in this network.
 
 ```{r 19}
 data_source_network <- infer_supporting_datasources(signaling_graph_list = active_signaling_network,
