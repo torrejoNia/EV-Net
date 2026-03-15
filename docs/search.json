@@ -270,7 +270,7 @@
     "href": "index.html#installation",
     "title": "EV-Net",
     "section": "Installation",
-    "text": "Installation\nInstallation typically takes a few minutes, depending on how many dependencies are already installed on your system. You can install EV-Net (and its required dependencies) directly from GitHub:\n\nif(!requireNamespace(\"devtools\", quietly = TRUE)) {\n  install.packages(\"devtools\") \n}\n\ndevtools::install_github(\"torrejoNia/EV-Net\")\n\nEV-Net was tested on both Windows and Linux (most recently tested R version: R 4.5.1)\nWe would be submitting our package to Bioconductor in the near future."
+    "text": "Installation\nEV-Net is an R package that requires R version 4.3.2 or higher for installation.\nInstallation time depends on the number of dependencies already installed. In our testing, it ranged from approximately 5 to 20 minutes. You can install EV-Net (and its required dependencies) directly from GitHub:\n\nif(!requireNamespace(\"devtools\", quietly = TRUE)) {\n  install.packages(\"devtools\") \n}\n\ndevtools::install_github(\"torrejoNia/EV-Net\")\n\nlibrary(EVNet)\n\nEV-Net has been tested on Windows, Linux and MacOS. Most recently tested with R version 4.5.2.\nYou can find the EV-Net source code on GitHub here → EV-Net Github repo"
   },
   {
     "objectID": "index.html#overview-of-ev-net",

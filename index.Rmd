@@ -20,7 +20,9 @@ regulatory potential in a recipient tissue of interest.
 
 ## Installation
 
-Installation typically takes a few minutes, depending on how many dependencies are already installed on your system. You can install EV-Net (and its required dependencies) directly from GitHub:
+EV-Net is an R package that requires R version 4.3.2 or higher for installation.
+
+Installation time depends on the number of dependencies already installed. In our testing, it ranged from approximately 5 to 20 minutes. You can install EV-Net (and its required dependencies) directly from GitHub:
 
 ```{r gh-installation, eval = FALSE}
 if(!requireNamespace("devtools", quietly = TRUE)) {
@@ -28,11 +30,13 @@ if(!requireNamespace("devtools", quietly = TRUE)) {
 }
 
 devtools::install_github("torrejoNia/EV-Net")
+
+library(EVNet)
 ```
 
-EV-Net was tested on both Windows and Linux (most recently tested R version: R 4.5.1)
+EV-Net has been tested on Windows, Linux and MacOS. Most recently tested with R version 4.5.2.
 
-We would be submitting our package to Bioconductor in the near future.
+You can find the EV-Net source code on GitHub here → [EV-Net Github repo](https://github.com/torrejoNia/EV-Net) 
 
 ## Overview of EV-Net
 ### Background

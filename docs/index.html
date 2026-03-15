@@ -174,16 +174,19 @@ rmarkdown::render("README.Rmd",output_format = "md_document")
 <p><strong>EV-Net: A computational framework to model extracellular vesicles-mediated communication.</strong> EV-Net enables the identification and prioritization of EV cargo molecules with high regulatory potential in a recipient tissue of interest.</p>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>Installation typically takes a few minutes, depending on how many dependencies are already installed on your system. You can install EV-Net (and its required dependencies) directly from GitHub:</p>
+<p>EV-Net is an R package that requires R version 4.3.2 or higher for installation.</p>
+<p>Installation time depends on the number of dependencies already installed. In our testing, it ranged from approximately 5 to 20 minutes. You can install EV-Net (and its required dependencies) directly from GitHub:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"devtools"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"devtools"</span>) </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"torrejoNia/EV-Net"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"torrejoNia/EV-Net"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(EVNet)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>EV-Net was tested on both Windows and Linux (most recently tested R version: R 4.5.1)</p>
-<p>We would be submitting our package to Bioconductor in the near future.</p>
+<p>EV-Net has been tested on Windows, Linux and MacOS. Most recently tested with R version 4.5.2.</p>
+<p>You can find the EV-Net source code on GitHub here → <a href="https://github.com/torrejoNia/EV-Net">EV-Net Github repo</a></p>
 </section>
 <section id="overview-of-ev-net" class="level2">
 <h2 class="anchored" data-anchor-id="overview-of-ev-net">Overview of EV-Net</h2>
