@@ -230,15 +230,36 @@ rmarkdown::render("README.Rmd",output_format = "md_document")
 </section>
 <section id="funding" class="level2">
 <h2 class="anchored" data-anchor-id="funding">Funding</h2>
-<p>The core of this work was developed during the EMBO scientific exchange grant 10987 carried out by Estefania Torrejón. Additional work was supported by the Research Unit iNOVA4Health (UID/4462/2025) and by the Associated Laboratory LS4FUTURE (LA/P/0087/2020), both financially supported by Fundação para a Ciência e Tecnologia / Ministério da Educação, Ciência e Inovação, and the EVCA Twinning Project (Horizon GA n° 101079264) financially supported by the European Union.</p>
-<p>The aims of this study contribute to the ERDERA project (participant: Anaïs Baudot), which has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement N°101156595. Anaïs Baudot was also supported by France 2030 state funding managed by the National Research Agency with the reference “ANR-22-PESN-0013”.</p>
-<p>Estefania’s PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/202.</p>
+<p>The core of this work was developed during the EMBO scientific exchange grant 10987 carried out by ET in AB lab. Additional work was supported by the Research Unit iNOVA4Health (UID/4462/2025) and by the Associated Laboratory LS4FUTURE (LA/P/0087/2020), both financially supported by Fundação para a Ciência e Tecnologia / Ministério da Educação, Ciência e Inovação, and the EVCA Twinning Project (Horizon GA n° 101079264) financially supported by the European Union.</p>
+<p>The aims of this study contribute to the ERDERA project (participant: AB), which has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement N°101156595. AB was also supported by France 2030 state funding managed by the National Research Agency with the reference “ANR-22-PESN-0013”. RMO was supported by Fundação para a Ciência e a Tecnologia (2022.05764.PTDC). MPM was supported by the European Commission CORDIS Pas Gras Project (101080329). ET’s PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/202.</p>
 <p>Presentations in conferences were supported by the European Union Twining Project EVCA (Horizon GA n° 101079264) and International Society of Computational Biology Student Council (ISCB-SC).</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <p><strong>Pre-print in preparation</strong></p>
 <p>NicheNet: Browaeys, R., Saelens, W. &amp; Saeys, Y. NicheNet: modeling intercellular communication by linking ligands to target genes. Nat Methods (2019) doi:10.1038/s41592-019-0667-5</p>
+</section>
+<section id="if-you-have-problems-installing-dependencies" class="level2">
+<h2 class="anchored" data-anchor-id="if-you-have-problems-installing-dependencies">If you have problems installing dependencies</h2>
+<p>Some systems may fail to install <code>ComplexHeatmap</code> and <code>Seurat</code> automatically when installing EV-Net, because they require additional repositories or dependencies.</p>
+<p>Please install them manually first:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install BiocManager if needed</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>) </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Install ComplexHeatmap from Bioconductor</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"ComplexHeatmap"</span>) </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Seurat and SeuratObject from CRAN</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"SeuratObject"</span>, <span class="st">"Seurat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After that, install <strong>EV-Net</strong>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"devtools"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"devtools"</span>) </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"torrejoNia/EV-Net"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>

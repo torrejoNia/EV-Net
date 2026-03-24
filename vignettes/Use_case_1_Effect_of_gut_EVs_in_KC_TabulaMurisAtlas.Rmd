@@ -25,6 +25,7 @@ library(tidyverse)
 library(dplyr)
 library(here)
 ```
+**NOTE: If you encounter errors when loading Seurat or SeuratObject, there may have been issues during package  installation. Please refer to the README section "If you have problems installing dependencies" and install these dependencies manually.** 
 
 1. Load filtered Seurat object
 

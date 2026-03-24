@@ -2,9 +2,7 @@
 title: "Use case 2: Effect of LPS treated microglia EVs in healthy microglia"
 author: "Estefania"
 date: "2025-03-23"
-output: 
-  html_document:
-    theme: darkly
+output: md_document
 always_allow_html: true
 ---
 
@@ -21,8 +19,6 @@ This use case explores the the effect of EVs released by lipopolysaccharide (LPS
 ```{r 0}
 
 library(EVNet)
-library(Seurat)
-library(SeuratObject)
 library(tidyverse)
 library(dplyr)
 library(here)

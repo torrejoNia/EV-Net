@@ -89,18 +89,9 @@ The following vignettes demonstrate how to perform a basic EV-Net analysis. We p
 
 ## Funding
 
-The core of this work was developed during the EMBO scientific exchange grant 10987 carried out 
-by Estefania Torrejón. Additional work was supported by the Research Unit iNOVA4Health 
-(UID/4462/2025) and by the Associated Laboratory LS4FUTURE (LA/P/0087/2020), both financially 
-supported by Fundação para a Ciência e Tecnologia / Ministério da Educação, Ciência e Inovação, 
-and the EVCA Twinning Project (Horizon GA n° 101079264) financially supported by the European Union.
+The core of this work was developed during the EMBO scientific exchange grant 10987 carried out by ET in AB lab. Additional work was supported by the Research Unit iNOVA4Health (UID/4462/2025) and by the Associated Laboratory LS4FUTURE (LA/P/0087/2020), both financially supported by Fundação para a Ciência e Tecnologia / Ministério da Educação, Ciência e Inovação, and the EVCA Twinning Project (Horizon GA n° 101079264) financially supported by the European Union. 
 
-The aims of this study contribute to the ERDERA project (participant: Anaïs Baudot), which has received funding
-from the European Union’s Horizon Europe research and innovation programme under grant agreement N°101156595. 
-Anaïs Baudot was also supported by France 2030 state funding managed by the National Research Agency with
-the reference "ANR-22-PESN-0013".
-
-Estefania's PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/202.
+The aims of this study contribute to the ERDERA project (participant: AB), which has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement N°101156595. AB was also supported by France 2030 state funding managed by the National Research Agency with the reference "ANR-22-PESN-0013". RMO was supported by Fundação para a Ciência e a Tecnologia (2022.05764.PTDC). MPM was supported by the European Commission CORDIS Pas Gras Project (101080329). ET’s PhD fellowship is funded by the iNOVA4Health-FCT fellowship UI/BD/154345/202.
 
 Presentations in conferences were supported by the European Union Twining Project EVCA (Horizon GA n° 101079264) and International Society of Computational Biology Student Council (ISCB-SC).
 
@@ -109,3 +100,29 @@ Presentations in conferences were supported by the European Union Twining Projec
 **Pre-print in preparation**
 
 NicheNet: Browaeys, R., Saelens, W. & Saeys, Y. NicheNet: modeling intercellular communication by linking ligands to target genes. Nat Methods (2019) doi:10.1038/s41592-019-0667-5
+
+## If you have problems installing dependencies
+
+Some systems may fail to install `ComplexHeatmap` and `Seurat` automatically when installing EV-Net, because they require additional repositories or dependencies.
+
+Please install them manually first:
+
+```{r dependencies, eval = FALSE}
+# Install BiocManager if needed
+install.packages("BiocManager") 
+# Install ComplexHeatmap from Bioconductor
+BiocManager::install("ComplexHeatmap") 
+
+# Install Seurat and SeuratObject from CRAN
+install.packages(c("SeuratObject", "Seurat"))
+```
+
+After that, install **EV-Net**:
+
+```{r installation, eval = FALSE}
+if(!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools") 
+}
+
+devtools::install_github("torrejoNia/EV-Net")
+```
