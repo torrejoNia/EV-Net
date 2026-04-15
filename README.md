@@ -41,7 +41,7 @@ with R version 4.5.2.
 ## Learn more about EV-Net
 
 For detailed documentation, tutorials, and examples, visit the: 👉
-[Quarto EV-Net page](https://torrejonia.github.io/EV-Net/)
+[EV-Net page](https://torrejonia.github.io/EV-Net/)
 
 ## Authors
 
@@ -60,7 +60,13 @@ Oliveira](https://scholar.google.com/citations?user=b55XP-oAAAAJ&hl=en&oi=ao)
 
 ## References
 
-**Pre-print in preparation**
+**Pre-print:** Torrejon, E., Sleegers, J., Matthiesen, R., Macedo, M.
+P., Baudot, A., & Machado de Oliveira, R. (2026). EV-Net: A
+computational framework to model extracellular vesicles-mediated
+communication. bioRxiv, 2026-04.
+
+Read it
+[here](https://www.biorxiv.org/content/10.64898/2026.04.02.716053v1)
 
 ## Funding
 

@@ -97,7 +97,9 @@ Presentations in conferences were supported by the European Union Twining Projec
 
 ## References
 
-**Pre-print in preparation**
+**Pre-print:** Torrejon, E., Sleegers, J., Matthiesen, R., Macedo, M. P., Baudot, A., & Machado de Oliveira, R. (2026). EV-Net: A computational framework to model extracellular vesicles-mediated communication. bioRxiv, 2026-04.
+
+Read it [here](https://www.biorxiv.org/content/10.64898/2026.04.02.716053v1)
 
 NicheNet: Browaeys, R., Saelens, W. & Saeys, Y. NicheNet: modeling intercellular communication by linking ligands to target genes. Nat Methods (2019) doi:10.1038/s41592-019-0667-5
 
