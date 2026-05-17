@@ -38,6 +38,20 @@ library(EVNet)
 EV-Net has been tested on Windows, Linux and MacOS. Most recently tested
 with R version 4.5.2.
 
+## Docker
+
+A `Dockerfile` is provided that builds an RStudio Server image with all
+dependencies pre-installed via `renv` and the `EVNet` package ready to
+load.
+
+``` bash
+docker build -t evnet .
+docker run --rm -p 8787:8787 -e PASSWORD=evnet evnet
+```
+
+Open <http://localhost:8787> and log in with user `rstudio` / password
+`evnet`. Then `library(EVNet)` works out of the box.
+
 ## Learn more about EV-Net
 
 For detailed documentation, tutorials, and examples, visit the: 👉
