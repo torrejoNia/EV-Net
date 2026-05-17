@@ -38,6 +38,46 @@ library(EVNet)
 EV-Net has been tested on Windows, Linux and MacOS. Most recently tested
 with R version 4.5.2.
 
+## Docker
+
+A `Dockerfile` is provided that builds an RStudio Server image with all
+dependencies pre-installed via `renv` and the `EVNet` package ready to
+load.
+
+**1. Build the image**
+
+``` bash
+docker build -t evnet .
+```
+
+**2. Prepare a host folder for your work and data**
+
+Create a folder on your machine and download the EV cargo target matrix
+from
+[Zenodo](https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds)
+into it:
+
+``` bash
+mkdir -p ~/evnet-work
+curl -Lo ~/evnet-work/EV_cargo_target_matrix.rds \
+  https://zenodo.org/records/15019664/files/EV_cargo_target_matrix.rds
+```
+
+**3. Run the container with the folder mounted**
+
+``` bash
+docker run --rm -p 8787:8787 -e PASSWORD=evnet \
+  -v ~/evnet-work:/home/rstudio/work \
+  evnet
+```
+
+Open <http://localhost:8787> and log in with user `rstudio` / password
+`evnet`. Then `library(EVNet)` works out of the box. Anything you save
+under `/home/rstudio/work` inside RStudio (scripts, results, plots)
+persists in `~/evnet-work` on your host across container restarts, and
+the Zenodo data file is available at
+`/home/rstudio/work/EV_cargo_target_matrix.rds`.
+
 ## Learn more about EV-Net
 
 For detailed documentation, tutorials, and examples, visit the: 👉
