@@ -159,19 +159,8 @@ EV_cargo_activities <- EV_cargo_activities %>% arrange(-aupr_corrected) %>% muta
 EV_cargo_activities
 
 ```
-### 13. Visualization of top-ranked EV cargo
 
-```{r 13}
-p_hist_EV_cargo_activity <- ggplot(EV_cargo_activities, aes(x=aupr_corrected)) + 
-  geom_histogram(color="black", fill="darkorange")  + 
-  geom_vline(aes(xintercept=min(EV_cargo_activities %>% top_n(30, aupr_corrected) %>% pull(aupr_corrected))),
-             color="red", linetype="dashed", size=1) + 
-  labs(x="EV cargo activity (PCC)", y = "# EV cargo") +
-  theme_classic()
-
-p_hist_EV_cargo_activity
-```
-### 14. We can also visualize the EV cargo activity measure (AUPR) of these top-ranked EV cargo
+### 13. We can visualize the EV cargo activity measure (AUPR) of these top-ranked EV cargo
 > **Note:** We have selected the top 30 `best_upstream_EV_cargo` but this number can be changed.
 
 ```{r 14}
@@ -186,7 +175,7 @@ vis_EV_cargo_aupr <- EV_cargo_activities %>% filter(test_EV_cargo %in% best_upst
     theme(axis.text.x.top = element_blank()))  
 ```
 
-### 15. Infer target genes of top-ranked EV cargo
+### 14. Infer target genes of top-ranked EV cargo
 
 ```{r 15}
 active_EV_cargo_target_links_df <- best_upstream_EV_cargo %>%
@@ -218,13 +207,13 @@ target_genes_heatmap <- make_heatmap_ggplot(vis_EV_cargo_target, "Prioritized EV
 ```{r 15.7}
 target_genes_heatmap
 ```
-### 16. Save plot (optional)
+### 15. Save plot (optional)
 ```{r 16}
 png("target_genes_heatmap_microglia_EV_cargo_RNAseq.png", res = 300, width = 2000, height = 2000)
 print(target_genes_heatmap)
 ```
 
-### 17. Build an interaction network
+### 16. Build an interaction network
 
 Next we will build an interaction network between one of the top-ranked EV cargo: the Mtdh protein, and two of its targets with biological relevance for inflammation: Ddr1 and Slc7a11 (choice was made after studying the target_genes_heatmap and performing a small literature search). 
 
