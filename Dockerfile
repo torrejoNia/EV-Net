@@ -33,6 +33,7 @@ RUN echo "options(repos = c(CRAN = 'https://packagemanager.posit.co/cran/__linux
 WORKDIR /home/rstudio
 
 COPY --chown=rstudio:rstudio . /home/rstudio/
+COPY --chown=rstudio:rstudio docker-renv /home/rstudio
 
 RUN echo 'source("renv/activate.R")' > /home/rstudio/.Rprofile \
     && chown rstudio:rstudio /home/rstudio/.Rprofile
