@@ -1,0 +1,5 @@
+python-igraph==0.11.9
+pandas==2.2.2
+numpy==2.0.0
+pyarrow==21.0.0
+matplotlib==3.9.0
